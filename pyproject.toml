@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "geo-task"
+version = "0.1.0"
+description = ""
+authors = ["Arseny Leontev <arseny.leontev@gmail.com>"]
+readme = "README.md"
+packages = [{include = "geo_task"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sqlalchemy2-stubs = "^0.0.2a31"
+fastapi = "^0.88.0"
+sqlalchemy = "^1.4.46"
+flake8-eradicate = "^1.4.0"
+alembic = "^1.9.1"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+flake8 = "*"
+black = "^22.12.0"
+isort = "^5.11.4"
+flake8-broken-line = "^0.6.0"
+flake8-string-format = "^0.3.0"
+pep8-naming = "^0.13.3"
+flake8-bugbear = "^22.12.6"
+flake8-comprehensions = "^3.10.1"
+flake8-print = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
