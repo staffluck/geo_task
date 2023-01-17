@@ -2,12 +2,14 @@ import uvicorn
 from fastapi import FastAPI
 
 from src.config import ServerSettings
+from src.infrastructure.data_access.postgresql.tables.user import map_user
 from src.presentation.api.v1.routers import router
 
 
 def setup_app() -> FastAPI:
     app = FastAPI(debug=True)
     app.include_router(router)
+    map_user()
     return app
 
 
