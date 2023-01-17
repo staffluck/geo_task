@@ -28,15 +28,18 @@ class DatabaseSettings(BaseSettings):
         )
 
 
-class ServerConfig(BaseSettings):
+class ServerSettings(BaseSettings):
     DEBUG: bool = True
 
     SERVER_HOST: str = "127.0.0.1"
     SERVER_PORT: int = 8000
 
 
-import os
+class SecuritySettings(BaseSettings):
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_LIFETIME: str
 
-print(os.getenv("DB_NAME"))
 
 database_settings = DatabaseSettings()
+security_settings = SecuritySettings()

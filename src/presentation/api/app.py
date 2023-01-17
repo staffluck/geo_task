@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
-from src.config import ServerConfig
+from src.config import ServerSettings
 
 
 def setup_app() -> FastAPI:
@@ -13,7 +13,7 @@ app = setup_app()
 
 
 if __name__ == "__main__":
-    server_settings = ServerConfig()
+    server_settings = ServerSettings()
     uvicorn.run(
         app="src.presentation.api.app:app",
         host=server_settings.SERVER_HOST,
