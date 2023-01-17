@@ -2,10 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 
 from src.config import ServerSettings
+from src.presentation.api.v1.routers import router
 
 
 def setup_app() -> FastAPI:
     app = FastAPI(debug=True)
+    app.include_router(router)
     return app
 
 
