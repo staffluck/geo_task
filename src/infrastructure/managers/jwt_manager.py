@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 
 from jose import JWTError, jwt
 
-from src.business_logic.common.exceptions import BadJWTTokenException
+from src.business_logic.common.exceptions import BadJWTTokenError
+from src.business_logic.user.protocols.security import IJWTManager
 from src.config import SecuritySettings
 
 
-class JWTManager:
+class JWTManager(IJWTManager):
     def __init__(self, security_settings: SecuritySettings) -> None:
         self.settings = security_settings
 
@@ -30,5 +31,5 @@ class JWTManager:
                 algorithms=[self.settings.ALGORITHM],
             )
         except JWTError as e:
-            raise BadJWTTokenException from e
+            raise BadJWTTokenError from e
         return payload

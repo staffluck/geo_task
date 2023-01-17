@@ -1,8 +1,8 @@
 import sqlalchemy as sa
+from data_access.postgresql.base import mapper_registry
 from sqlalchemy import Table
 
-from data_access.postgresql.base import mapper_registry
-from src.business_logic.entities.user import User
+from src.business_logic.user.entities.user import User
 
 user_table = Table(
     "users",
@@ -15,5 +15,5 @@ user_table = Table(
 )
 
 
-def map_user():
+def map_user() -> None:
     mapper_registry.map_imperatively(User, user_table)

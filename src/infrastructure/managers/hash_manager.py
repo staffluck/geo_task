@@ -1,9 +1,10 @@
 from passlib.context import CryptContext
 
+from src.business_logic.user.protocols.security import IHashManager
 from src.config import SecuritySettings
 
 
-class HashManager:
+class HashManager(IHashManager):
     def __init__(self, security_settings: SecuritySettings) -> None:
         self.security_settings = security_settings
         self.hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
