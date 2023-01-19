@@ -35,7 +35,7 @@ class AuthService:
     async def signin(self, login_data: UserSignin) -> Token:
         user = await self.user_uow.user.get_user_by_email(login_data.email)
         if not user:
-            raise BadCredentialsError()
+            raise BadCredentialsError("email/password введены неверно")
         data_to_jwt = {"sub": user.id}
         access_token = self.jwt_manager.create_jwt(
             data_to_jwt, timedelta(self.security_settings.ACCESS_TOKEN_EXPIRE_MINUTES)

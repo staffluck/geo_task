@@ -1,6 +1,10 @@
 from src.business_logic.common.exceptions import ApplicationError
 
 
-class BadCredentialsError(ApplicationError):
-    message = "Не найден аккаунт с переданным email/password"
+class AuthError(ApplicationError):
+    message = "Ошибка во время аутентификации"
     status = 401
+
+
+class BadCredentialsError(AuthError):
+    ...
