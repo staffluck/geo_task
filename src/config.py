@@ -39,6 +39,7 @@ class SecuritySettings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: str
+    REFRESH_TOKEN_EXPIRE_MINUTES: str
 
 
 database_settings = DatabaseSettings()

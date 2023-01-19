@@ -13,5 +13,15 @@ class UserCreate(BaseUser):
     password: str = Field(min_length=6)
 
 
+class UserSignin(DTO):
+    email: EmailStr
+    password: str = Field(min_length=6)
+
+
+class Token(DTO):
+    access_token: str
+    refresh_token: str
+
+
 class UserDTO(BaseUser):
     ...
