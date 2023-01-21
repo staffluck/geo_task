@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 @dataclass
 class User:
-    id: int | None
+    id: int
     email: str
     password: str
     first_name: str | None
@@ -16,7 +16,7 @@ class User:
         cls, email: str, password: str, first_name: str | None, last_name: str | None
     ) -> User:
         return cls(
-            id=None,
+            id=None,  # type: ignore
             email=email,
             password=password,
             first_name=first_name,

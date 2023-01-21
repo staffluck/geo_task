@@ -1,11 +1,8 @@
-from datetime import timedelta
-
 from src.business_logic.user.dto.auth import Token, UserCreate, UserDTO, UserSignin
 from src.business_logic.user.entities.user import User
 from src.business_logic.user.exceptions.auth import BadCredentialsError
 from src.business_logic.user.protocols.security import IHashManager, IJWTManager
 from src.business_logic.user.protocols.uow import IUserUoW
-from src.config import SecuritySettings
 
 
 class AuthService:
@@ -34,6 +31,6 @@ class AuthService:
         user = await self.user_uow.user.get_user_by_email(login_data.email)
         if not user:
             raise BadCredentialsError("email/password введены неверно")
-        access_token = self.jwt_manager.create_access_token(user.id, timedelta())
-        refresh_token = self.jwt_manager.create_refresh_token(user.id, timedelta())
+        access_token = self.jwt_manager.create_access_token(user.id)
+        refresh_token = self.jwt_manager.create_refresh_token(user.id)
         return Token(access_token=access_token, refresh_token=refresh_token)

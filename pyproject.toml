@@ -40,3 +40,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 line_length = 100123
+
+[tool.mypy]
+ignore_missing_imports=true
+exclude=['src/infrastructure/data_access/postgresql/migrations']

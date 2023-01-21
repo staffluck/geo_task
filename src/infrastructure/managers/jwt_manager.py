@@ -17,16 +17,16 @@ class JWTManager(IJWTManager):
     def __init__(self, security_settings: SecuritySettings) -> None:
         self.settings = security_settings
 
-    async def create_access_token(self, user_id: int) -> str:
+    def create_access_token(self, user_id: int) -> str:
         return self._create_jwt(
             {"sub": user_id, "type": JWTType.ACCESS_TOKEN},
-            expires_delta=self.settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+            expires_delta=timedelta(self.settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         )
 
-    async def create_refresh_token(self, user_id: int) -> str:
+    def create_refresh_token(self, user_id: int) -> str:
         return self._create_jwt(
             {"sub": user_id, "type": JWTType.REFRESH_TOKEN},
-            expires_delta=self.settings.REFRESH_TOKEN_EXPIRE_MINUTES,
+            expires_delta=timedelta(minutes=self.settings.REFRESH_TOKEN_EXPIRE_MINUTES),
         )
 
     def _create_jwt(self, data: dict, expires_delta: timedelta | None = None) -> str:
@@ -47,7 +47,7 @@ class JWTManager(IJWTManager):
     def decode_refresh_token(self, refresh_token: str) -> dict:
         return self._decode_jwt(refresh_token, JWTType.REFRESH_TOKEN)
 
-    def _decode_jwt(self, jwt_token: str, token_type: str) -> dict:
+    def _decode_jwt(self, jwt_token: str, token_type: JWTType) -> dict:
         jwt_exception = BadJWTTokenError()
         try:
             payload = jwt.decode(
