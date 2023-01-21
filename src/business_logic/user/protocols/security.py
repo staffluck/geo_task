@@ -1,12 +1,17 @@
-from datetime import timedelta
 from typing import Protocol
 
 
 class IJWTManager(Protocol):
-    def create_jwt(self, data: dict, expires_delta: timedelta | None) -> str:
+    def create_access_token(self, user_id: int) -> str:
         ...
 
-    def decode_jwt(self, jwt_token: str) -> dict:
+    def create_refresh_token(self, user_id: int) -> str:
+        ...
+
+    def decode_refresh_token(self, refresh_token: str) -> dict:
+        ...
+
+    def decode_access_token(self, access_token: str) -> dict:
         ...
 
 

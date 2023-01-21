@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from enum import Enum
 
 from jose import JWTError, jwt
 
@@ -7,11 +8,28 @@ from src.business_logic.user.protocols.security import IJWTManager
 from src.config import SecuritySettings
 
 
+class JWTType(Enum):
+    REFRESH_TOKEN = "refresh"
+    ACCESS_TOKEN = "access"
+
+
 class JWTManager(IJWTManager):
     def __init__(self, security_settings: SecuritySettings) -> None:
         self.settings = security_settings
 
-    def create_jwt(self, data: dict, expires_delta: timedelta | None = None) -> str:
+    async def create_access_token(self, user_id: int) -> str:
+        return self._create_jwt(
+            {"sub": user_id, "type": JWTType.ACCESS_TOKEN},
+            expires_delta=self.settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+        )
+
+    async def create_refresh_token(self, user_id: int) -> str:
+        return self._create_jwt(
+            {"sub": user_id, "type": JWTType.REFRESH_TOKEN},
+            expires_delta=self.settings.REFRESH_TOKEN_EXPIRE_MINUTES,
+        )
+
+    def _create_jwt(self, data: dict, expires_delta: timedelta | None = None) -> str:
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
@@ -23,7 +41,14 @@ class JWTManager(IJWTManager):
         )
         return encoded_jwt
 
-    def decode_jwt(self, jwt_token: str) -> dict:
+    def decode_access_token(self, access_token: str) -> dict:
+        return self._decode_jwt(access_token, JWTType.ACCESS_TOKEN)
+
+    def decode_refresh_token(self, refresh_token: str) -> dict:
+        return self._decode_jwt(refresh_token, JWTType.REFRESH_TOKEN)
+
+    def _decode_jwt(self, jwt_token: str, token_type: str) -> dict:
+        jwt_exception = BadJWTTokenError()
         try:
             payload = jwt.decode(
                 jwt_token,
@@ -31,5 +56,11 @@ class JWTManager(IJWTManager):
                 algorithms=[self.settings.ALGORITHM],
             )
         except JWTError as e:
-            raise BadJWTTokenError from e
+            raise jwt_exception from e
+        try:
+            input_token_type = JWTType(payload["type"])
+        except ValueError:
+            raise jwt_exception
+        if input_token_type != token_type:
+            raise jwt_exception
         return payload

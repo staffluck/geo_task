@@ -17,5 +17,5 @@ async def signup(
 @router.post("/signin", response_model=Token)
 async def signin(
     signin_data: UserSignin, auth_service: AuthService = Depends(get_auth_service)
-) -> UserDTO:
+) -> Token:
     return await auth_service.signin(signin_data)

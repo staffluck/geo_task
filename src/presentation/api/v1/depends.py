@@ -53,11 +53,9 @@ def get_auth_service(
     uow: SQLAlchemyUoW = Depends(get_uow),
     jwt_manager: JWTManager = Depends(get_jwt_manager),
     hash_manager: HashManager = Depends(get_hash_manager),
-    security_settings: SecuritySettings = Depends(get_security_settings),
 ) -> AuthService:
     return AuthService(
         jwt_manager=jwt_manager,
         hash_manager=hash_manager,
         user_uow=uow,
-        security_settings=security_settings,
     )

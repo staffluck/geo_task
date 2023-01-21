@@ -14,12 +14,10 @@ class AuthService:
         jwt_manager: IJWTManager,
         hash_manager: IHashManager,
         user_uow: IUserUoW,
-        security_settings: SecuritySettings,
     ) -> None:
         self.jwt_manager = jwt_manager
         self.hash_manager = hash_manager
         self.user_uow = user_uow
-        self.security_settings = security_settings
 
     async def signup(self, user_data: UserCreate) -> UserDTO:
         user = User.create(
@@ -36,11 +34,6 @@ class AuthService:
         user = await self.user_uow.user.get_user_by_email(login_data.email)
         if not user:
             raise BadCredentialsError("email/password введены неверно")
-        data_to_jwt = {"sub": user.id}
-        access_token = self.jwt_manager.create_jwt(
-            data_to_jwt, timedelta(self.security_settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-        )
-        refresh_token = self.jwt_manager.create_jwt(
-            data_to_jwt, timedelta(self.security_settings.REFRESH_TOKEN_EXPIRE_MINUTES)
-        )
+        access_token = self.jwt_manager.create_access_token(user.id, timedelta())
+        refresh_token = self.jwt_manager.create_refresh_token(user.id, timedelta())
         return Token(access_token=access_token, refresh_token=refresh_token)
