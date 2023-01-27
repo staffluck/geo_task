@@ -5,16 +5,20 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.orm import clear_mappers
 
 from src.config import DatabaseSettings
-from src.infrastructure.data_access.postgresql.tables import meta
+from src.infrastructure.data_access.postgresql.base import mapper_registry
+from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = meta
+target_metadata = mapper_registry.metadata
+clear_mappers()
+map_tables()
 
 
 config.set_main_option("sqlalchemy.url", DatabaseSettings().db_url)
