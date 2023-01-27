@@ -1,5 +1,4 @@
 class BaseApplicationError(Exception):
-    status = 500
     message = ""
 
 
@@ -16,10 +15,9 @@ class ApplicationError(BaseApplicationError):
 
 class BadJWTTokenError(ApplicationError):
     message = "Невозможно обработать переданный JWT токен"
-    status = 400
 
 
-class BaseFieldBasedApplicationError(BaseApplicationError):
+class FieldBasedError(BaseApplicationError):
     message = "Произошла ошибка при обработке тела запроса"
     context_message = "Произошла ошибка при обработке поля: {field}"
 
@@ -40,3 +38,13 @@ class BaseFieldBasedApplicationError(BaseApplicationError):
         return {
             field: self.context_message.format(field=field) for field in self.fields
         }
+
+
+class ObjectNotFoundError(FieldBasedError):
+    message = "Объект не найден"
+    context_message = "Объект с таким {field} не найден"
+
+
+class ObjectAlreadyExistsError(FieldBasedError):
+    message = "Объект с такими данными уже существует"
+    context_message = "Объект с таким {field} уже существует"

@@ -5,7 +5,7 @@ from src.business_logic.user.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
 
 user_table = Table(
-    "users",
+    "user",
     mapper_registry.metadata,
     sa.Column("id", sa.Integer(), primary_key=True),
     sa.Column("email", sa.String(length=256), nullable=False),
