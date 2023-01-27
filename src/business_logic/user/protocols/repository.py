@@ -10,8 +10,8 @@ class IUserRepoistory(Protocol):
     async def is_exists(self, **kwargs: str | int) -> bool:
         ...
 
-    async def get_user_by_id(self, user_id: int) -> User | None:
+    async def get_user_by_id(self, user_id: int) -> User:
         ...
 
-    async def get_user_by_email(self, email: str) -> User | None:
+    async def get_user_by_email(self, email: str) -> User:
         ...

@@ -3,6 +3,7 @@ from typing import AsyncGenerator
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.business_logic.user.entities.user import User
 from src.business_logic.user.services.auth_service import AuthService
 from src.config import (
     DatabaseSettings,

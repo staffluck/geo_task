@@ -1,6 +1,7 @@
 from src.business_logic.user.dto.auth import Token, UserCreate, UserDTO, UserSignin
 from src.business_logic.user.entities.user import User
 from src.business_logic.user.exceptions.auth import BadCredentialsError
+from src.business_logic.user.exceptions.user import UserNotFoundError
 from src.business_logic.user.protocols.security import IHashManager, IJWTManager
 from src.business_logic.user.protocols.uow import IUserUoW
 
@@ -28,9 +29,12 @@ class AuthService:
         return UserDTO.from_orm(user)
 
     async def signin(self, login_data: UserSignin) -> Token:
-        user = await self.user_uow.user.get_user_by_email(login_data.email)
-        if not user:
-            raise BadCredentialsError("email/password введены неверно")
+        try:
+            user = await self.user_uow.user.get_user_by_email(login_data.email)
+        except UserNotFoundError as e:
+            raise BadCredentialsError from e
+        if not self.hash_manager.verify_hash(login_data.password, user.password):
+            raise BadCredentialsError
         access_token = self.jwt_manager.create_access_token(user.id)
         refresh_token = self.jwt_manager.create_refresh_token(user.id)
         return Token(access_token=access_token, refresh_token=refresh_token)
