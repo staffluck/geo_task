@@ -23,5 +23,13 @@ class Token(DTO):
     refresh_token: str
 
 
+class AccessTokenData(DTO):
+    user_id: int
+
+
+class RefreshTokenData(DTO):
+    user_id: int
+
+
 class UserDTO(BaseUser):
     ...

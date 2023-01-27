@@ -1,4 +1,12 @@
-from src.business_logic.user.dto.auth import Token, UserCreate, UserDTO, UserSignin
+from src.business_logic.common.exceptions import BadJWTTokenError
+from src.business_logic.user.dto.auth import (
+    AccessTokenData,
+    RefreshTokenData,
+    Token,
+    UserCreate,
+    UserDTO,
+    UserSignin,
+)
 from src.business_logic.user.entities.user import User
 from src.business_logic.user.exceptions.auth import BadCredentialsError
 from src.business_logic.user.exceptions.user import UserNotFoundError
@@ -35,6 +43,17 @@ class AuthService:
             raise BadCredentialsError from e
         if not self.hash_manager.verify_hash(login_data.password, user.password):
             raise BadCredentialsError
-        access_token = self.jwt_manager.create_access_token(user.id)
-        refresh_token = self.jwt_manager.create_refresh_token(user.id)
+        access_token = self.jwt_manager.create_access_token(
+            AccessTokenData(user_id=user.id)
+        )
+        refresh_token = self.jwt_manager.create_refresh_token(
+            RefreshTokenData(user_id=user.id)
+        )
         return Token(access_token=access_token, refresh_token=refresh_token)
+
+    async def authorize_user(self, access_token: str) -> User:
+        token_data = self.jwt_manager.decode_access_token(access_token)
+        try:
+            user = await self.user_uow.user.get_user_by_id(token_data.user_id)
+        except UserNotFoundError as e:
+            raise BadJWTTokenError from e

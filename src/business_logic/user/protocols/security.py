@@ -1,17 +1,19 @@
 from typing import Protocol
 
+from src.business_logic.user.dto.auth import AccessTokenData, RefreshTokenData
+
 
 class IJWTManager(Protocol):
-    def create_access_token(self, user_id: int) -> str:
+    def create_access_token(self, token_data: AccessTokenData) -> str:
         ...
 
-    def create_refresh_token(self, user_id: int) -> str:
+    def create_refresh_token(self, token_data: RefreshTokenData) -> str:
         ...
 
-    def decode_refresh_token(self, refresh_token: str) -> dict:
+    def decode_refresh_token(self, refresh_token: str) -> RefreshTokenData:
         ...
 
-    def decode_access_token(self, access_token: str) -> dict:
+    def decode_access_token(self, access_token: str) -> AccessTokenData:
         ...
 
 
