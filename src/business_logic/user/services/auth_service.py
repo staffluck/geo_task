@@ -51,10 +51,10 @@ class AuthService:
         )
         return Token(access_token=access_token, refresh_token=refresh_token)
 
-    async def authorize_user(self, access_token: str) -> User:
+    async def authorize_user(self, access_token: str) -> UserDTO:
         token_data = self.jwt_manager.decode_access_token(access_token)
         try:
             user = await self.user_uow.user.get_user_by_id(token_data.user_id)
         except UserNotFoundError as e:
             raise BadJWTTokenError from e
-        return user
+        return UserDTO.from_orm(user)
