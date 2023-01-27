@@ -57,3 +57,4 @@ class AuthService:
             user = await self.user_uow.user.get_user_by_id(token_data.user_id)
         except UserNotFoundError as e:
             raise BadJWTTokenError from e
+        return user
