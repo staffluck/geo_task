@@ -3,7 +3,9 @@ from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.business_logic.common.protocols import IUoW
+from src.business_logic.task.protocols.uow import ITaskUoW
 from src.business_logic.user.protocols.uow import IUserUoW
+from src.infrastructure.data_access.postgresql.repositories.task import TaskRepository
 from src.infrastructure.data_access.postgresql.repositories.user import UserRepository
 
 
@@ -18,7 +20,13 @@ class SQLAlchemyBaseUoW(IUoW):
         await self.session.rollback()
 
 
-class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW):
-    def __init__(self, session: AsyncSession, user_repo: Type[UserRepository]) -> None:
+class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW, ITaskUoW):
+    def __init__(
+        self,
+        session: AsyncSession,
+        user_repo: Type[UserRepository],
+        task_repo: Type[TaskRepository],
+    ) -> None:
         self.user = user_repo(session)
+        self.task = task_repo(session)
         super().__init__(session)

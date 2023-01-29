@@ -2,9 +2,10 @@ import sqlalchemy as sa
 from geoalchemy2 import Geometry
 from sqlalchemy import Table
 
+from src.business_logic.task.entities.task import Task
 from src.infrastructure.data_access.postgresql.base import mapper_registry
 
-user_table = Table(
+task_table = Table(
     "task",
     mapper_registry.metadata,
     sa.Column("id", sa.Integer(), primary_key=True),
@@ -17,6 +18,5 @@ user_table = Table(
 )
 
 
-def map_task():
-    # mapper_registry.map_imperatively(User, user_table)
-    pass
+def map_task() -> None:
+    mapper_registry.map_imperatively(Task, task_table)

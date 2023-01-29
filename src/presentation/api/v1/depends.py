@@ -4,6 +4,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.dto.auth import UserDTO
 from src.business_logic.user.services.auth_service import AuthService
 from src.config import (
@@ -13,6 +14,7 @@ from src.config import (
     security_settings,
 )
 from src.infrastructure.data_access.postgresql.db import Session
+from src.infrastructure.data_access.postgresql.repositories.task import TaskRepository
 from src.infrastructure.data_access.postgresql.repositories.user import UserRepository
 from src.infrastructure.data_access.postgresql.uow import SQLAlchemyUoW
 from src.infrastructure.managers.hash_manager import HashManager
@@ -50,7 +52,9 @@ def get_hash_manager(
 
 
 def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
-    return SQLAlchemyUoW(session=session, user_repo=UserRepository)
+    return SQLAlchemyUoW(
+        session=session, user_repo=UserRepository, task_repo=TaskRepository
+    )
 
 
 def get_auth_service(
@@ -63,6 +67,10 @@ def get_auth_service(
         hash_manager=hash_manager,
         user_uow=uow,
     )
+
+
+def get_task_service(uow: SQLAlchemyUoW = Depends(get_uow)) -> TaskService:
+    return TaskService(task_uow=uow)
 
 
 async def get_current_user(

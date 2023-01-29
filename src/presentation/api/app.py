@@ -7,7 +7,7 @@ from src.business_logic.common.exceptions import (
     ObjectNotFoundError,
 )
 from src.config import ServerSettings
-from src.infrastructure.data_access.postgresql.tables.user import map_user
+from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
 from src.presentation.api.exception_handler import (
     application_error_handler,
     object_already_exists_error_handler,
@@ -20,7 +20,7 @@ def setup_app() -> FastAPI:
     app = FastAPI(debug=True)
     app.include_router(router)
 
-    map_user()
+    map_tables()
 
     app.add_exception_handler(ApplicationError, application_error_handler)
     app.add_exception_handler(ObjectNotFoundError, object_not_found_error_handler)
