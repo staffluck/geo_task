@@ -1,12 +1,34 @@
 from fastapi import APIRouter, Depends
 
-from src.business_logic.task.dto.task import GeoLocation, TaskDTO, TaskFilterByGeo
+from src.business_logic.task.dto.task import (
+    GeoLocation,
+    TaskCreate,
+    TaskDTO,
+    TaskFilterByGeo,
+)
 from src.business_logic.task.services.task_service import TaskService
 from src.presentation.api.v1.depends import get_task_service
 from src.presentation.schemas.common import LimitOffsetQuerySchema
-from src.presentation.schemas.task import TaskFilterByGeoQuerySchema
+from src.presentation.schemas.task import TaskCreateSchema, TaskFilterByGeoQuerySchema
 
 router = APIRouter()
+
+
+@router.post("/")
+async def create_task(
+    task_data: TaskCreateSchema,
+    task_service: TaskService = Depends(get_task_service),
+) -> TaskDTO:
+    task = await task_service.create_task(
+        TaskCreate(
+            title=task_data.title,
+            description=task_data.description,
+            reward=task_data.reward,
+            long=task_data.long,
+            lat=task_data.lat,
+        )
+    )
+    return task
 
 
 @router.get("/")

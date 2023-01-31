@@ -1,10 +1,12 @@
+from pydantic import Field
+
 from src.business_logic.common.dto.base import DTO
 
 
 class BaseTask(DTO):
     title: str
     description: str
-    reward: float
+    reward: float = Field(gt=0)
     long: float
     lat: float
 

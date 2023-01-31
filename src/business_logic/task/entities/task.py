@@ -9,15 +9,19 @@ class Task:
     id: int
     title: str
     description: str
+    reward: float
     long: float
     lat: float
     geo: Any = None
 
     @classmethod
-    def create(cls, title: str, description: str, long: float, lat: float) -> Task:
+    def create(
+        cls, title: str, description: str, reward: float, long: float, lat: float
+    ) -> Task:
         return cls(
             id=None,  # type: ignore
             title=title,
+            reward=reward,
             description=description,
             long=long,
             lat=lat,
