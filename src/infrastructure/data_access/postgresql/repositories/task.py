@@ -16,6 +16,7 @@ class TaskRepository(BaseRepository, ITaskRepository):
         return bool(expr.scalar())
 
     async def create_task(self, task: Task) -> Task:
+        task.geo = f"POINT({task.long} {task.lat})"
         self.session.add(task)
         await self.session.flush()
         return task
