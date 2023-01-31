@@ -1,5 +1,6 @@
 from typing import Protocol
 
+from src.business_logic.task.dto.task import TaskFilter, TaskFilterByGeo
 from src.business_logic.task.entities.task import Task
 
 
@@ -14,4 +15,9 @@ class ITaskRepository(Protocol):
         ...
 
     async def get_tasks(self, limit: int = 100, offset: int = 0) -> list[Task]:
+        ...
+
+    async def get_tasks_in_radius(
+        self, filter: TaskFilterByGeo, radius: int, limit: int = 100, offset: int = 0
+    ) -> list[Task]:
         ...

@@ -9,3 +9,16 @@ class BaseTask(DTO):
 
 class TaskDTO(BaseTask):
     ...
+
+
+class GeoLocation(DTO):
+    long: float
+    lat: float
+
+
+class TaskFilter(DTO):
+    current_geo: GeoLocation | None = None
+
+
+class TaskFilterByGeo(DTO):
+    current_geo: GeoLocation
