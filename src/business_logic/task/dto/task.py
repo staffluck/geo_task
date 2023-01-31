@@ -5,9 +5,15 @@ class BaseTask(DTO):
     title: str
     description: str
     reward: float
+    long: float
+    lat: float
 
 
 class TaskDTO(BaseTask):
+    ...
+
+
+class TaskCreate(BaseTask):
     ...
 
 
