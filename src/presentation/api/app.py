@@ -31,13 +31,3 @@ def setup_app() -> FastAPI:
 
 
 app = setup_app()
-
-
-if __name__ == "__main__":
-    server_settings = ServerSettings()
-    uvicorn.run(
-        app="src.presentation.api.app:app",
-        host=server_settings.SERVER_HOST,
-        port=server_settings.SERVER_PORT,
-        reload=server_settings.DEBUG,
-    )
