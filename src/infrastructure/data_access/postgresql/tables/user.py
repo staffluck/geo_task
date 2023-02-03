@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import Table
 
+from src.business_logic.task.entities.task import Task, TaskOwner
 from src.business_logic.user.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
 
@@ -17,4 +18,11 @@ user_table = Table(
 
 
 def map_user() -> None:
-    mapper_registry.map_imperatively(User, user_table)
+    mapper_registry.map_imperatively(
+        User,
+        user_table,
+    )
+    mapper_registry.map_imperatively(
+        TaskOwner,
+        user_table,
+    )

@@ -1,11 +1,11 @@
 from typing import Protocol
 
-from src.business_logic.task.dto.task import TaskFilter, TaskFilterByGeo
+from src.business_logic.task.dto.task import TaskCreate, TaskFilterByGeo
 from src.business_logic.task.entities.task import Task
 
 
 class ITaskRepository(Protocol):
-    async def create_task(self, task: Task) -> Task:
+    async def create_task(self, task: TaskCreate) -> Task:
         ...
 
     async def is_exists(self, **kwargs: str | int) -> bool:

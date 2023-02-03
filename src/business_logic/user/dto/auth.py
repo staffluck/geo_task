@@ -32,4 +32,4 @@ class RefreshTokenData(DTO):
 
 
 class UserDTO(BaseUser):
-    ...
+    id: int

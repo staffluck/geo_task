@@ -6,8 +6,10 @@ from src.business_logic.task.dto.task import (
     TaskDTO,
     TaskFilterByGeo,
 )
+from src.business_logic.task.dto.user import TaskOwnerDTO
 from src.business_logic.task.services.task_service import TaskService
-from src.presentation.api.v1.depends import get_task_service
+from src.business_logic.user.dto.auth import UserDTO
+from src.presentation.api.v1.depends import get_current_user, get_task_service
 from src.presentation.schemas.common import LimitOffsetQuerySchema
 from src.presentation.schemas.task import TaskCreateSchema, TaskFilterByGeoQuerySchema
 
@@ -18,6 +20,7 @@ router = APIRouter()
 async def create_task(
     task_data: TaskCreateSchema,
     task_service: TaskService = Depends(get_task_service),
+    user: UserDTO = Depends(get_current_user),
 ) -> TaskDTO:
     task = await task_service.create_task(
         TaskCreate(
@@ -26,6 +29,7 @@ async def create_task(
             reward=task_data.reward,
             long=task_data.long,
             lat=task_data.lat,
+            owner_id=user.id,
         )
     )
     return task

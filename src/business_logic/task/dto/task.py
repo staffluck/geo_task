@@ -16,7 +16,7 @@ class TaskDTO(BaseTask):
 
 
 class TaskCreate(BaseTask):
-    ...
+    owner_id: int
 
 
 class GeoLocation(DTO):
