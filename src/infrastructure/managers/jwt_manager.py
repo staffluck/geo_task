@@ -21,7 +21,7 @@ class JWTManager(IJWTManager):
     def create_access_token(self, token_data: AccessTokenData) -> str:
         return self._create_jwt(
             {"sub": str(token_data.user_id), "type": JWTType.ACCESS_TOKEN.value},
-            expires_delta=timedelta(self.settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+            expires_delta=timedelta(minutes=self.settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         )
 
     def create_refresh_token(self, token_data: RefreshTokenData) -> str:

@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from src.business_logic.task.entities.user import TaskOwner
-
 
 @dataclass
 class Task:
@@ -15,5 +13,24 @@ class Task:
     long: float
     lat: float
     owner_id: int
-    owner: TaskOwner
     geo: Any = None
+
+    @classmethod
+    def create(
+        cls,
+        title: str,
+        description: str,
+        reward: float,
+        long: float,
+        lat: float,
+        owner_id: int,
+    ) -> Task:
+        return cls(
+            id=None,  # type: ignore
+            title=title,
+            description=description,
+            reward=reward,
+            long=long,
+            lat=lat,
+            owner_id=owner_id,
+        )

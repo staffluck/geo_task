@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import Table
 
-from src.business_logic.task.entities.task import Task, TaskOwner
+from src.business_logic.task.entities.user import TaskOwner
 from src.business_logic.user.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
 

@@ -29,7 +29,12 @@ async def create_task(
             reward=task_data.reward,
             long=task_data.long,
             lat=task_data.lat,
-            owner_id=user.id,
+            owner=TaskOwnerDTO(
+                id=user.id,
+                email=user.email,
+                first_name=user.first_name,
+                last_name=user.last_name,
+            ),
         )
     )
     return task
