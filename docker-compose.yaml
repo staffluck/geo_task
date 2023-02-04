@@ -13,15 +13,6 @@ services:
     ports:
       - "5432:5432"
 
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
-      - RABBITMQ_DEFAULT_VHOST=${RABBIT_VHOST}
-    ports:
-      - "15672:15672"
-
   redis:
     image: redis:6.2.6-alpine
     command: redis-server --requirepass ${REDIS_PASSWORD}
