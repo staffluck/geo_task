@@ -14,7 +14,10 @@ from src.config import (
     security_settings,
 )
 from src.infrastructure.data_access.postgresql.db import Session
-from src.infrastructure.data_access.postgresql.repositories.task import TaskRepository
+from src.infrastructure.data_access.postgresql.repositories.task import (
+    TaskReader,
+    TaskRepository,
+)
 from src.infrastructure.data_access.postgresql.repositories.user import UserRepository
 from src.infrastructure.data_access.postgresql.uow import SQLAlchemyUoW
 from src.infrastructure.managers.hash_manager import HashManager
@@ -53,7 +56,10 @@ def get_hash_manager(
 
 def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
     return SQLAlchemyUoW(
-        session=session, user_repo=UserRepository, task_repo=TaskRepository
+        session=session,
+        user_repo=UserRepository,
+        task_repo=TaskRepository,
+        task_reader=TaskReader,
     )
 
 

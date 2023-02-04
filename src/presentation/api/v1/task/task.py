@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends
 from src.business_logic.task.dto.task import (
     GeoLocation,
     TaskCreate,
+    TaskDetail,
     TaskDTO,
     TaskFilterByGeo,
 )
@@ -66,3 +67,11 @@ async def get_near_tasks(
         offset=pagination_filter.offset,
     )
     return tasks
+
+
+@router.get("/{task_id}")
+async def get_task_detail(
+    task_id: int, task_service: TaskService = Depends(get_task_service)
+) -> TaskDetail:
+    task = await task_service.get_task_detail(task_id)
+    return task

@@ -2,7 +2,12 @@ from typing import List
 
 from pydantic import parse_obj_as
 
-from src.business_logic.task.dto.task import TaskCreate, TaskDTO, TaskFilterByGeo
+from src.business_logic.task.dto.task import (
+    TaskCreate,
+    TaskDetail,
+    TaskDTO,
+    TaskFilterByGeo,
+)
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.protocols.uow import ITaskUoW
 
@@ -28,6 +33,10 @@ class TaskService:
             offset=offset,
         )
         return parse_obj_as(List[TaskDTO], tasks)
+
+    async def get_task_detail(self, task_id: int) -> TaskDetail:
+        task = await self.task_uow.task_reader.get_task_detail(task_id)
+        return task
 
     async def create_task(self, task_data: TaskCreate) -> TaskDTO:
         task = Task.create(

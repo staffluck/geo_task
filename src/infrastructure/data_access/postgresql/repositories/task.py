@@ -1,12 +1,40 @@
 from geoalchemy2 import func
 from geoalchemy2.functions import ST_DistanceSphere
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 
-from src.business_logic.task.dto.task import TaskFilterByGeo
+from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
+from src.business_logic.task.dto.user import TaskOwnerDTO
 from src.business_logic.task.entities.task import Task
+from src.business_logic.task.entities.user import TaskOwner
 from src.business_logic.task.exceptions.task import TaskNotFoundError
-from src.business_logic.task.protocols.repository import ITaskRepository
+from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
 from src.infrastructure.data_access.postgresql.repositories.base import BaseRepository
+
+
+class TaskReader(BaseRepository, ITaskReader):
+    async def get_task_detail(self, task_id: int) -> TaskDetail:
+        query = (
+            select(Task, TaskOwner)
+            .join(TaskOwner, TaskOwner.id == Task.owner_id)
+            .filter(Task.id == task_id)
+        )
+        try:
+            expr = await self.session.execute(query)
+            data = expr.one()
+        except NoResultFound:
+            raise TaskNotFoundError(["id"])
+        task: Task = data[0]
+        task_owner: TaskOwner = data[1]
+        return TaskDetail(
+            title=task.title,
+            description=task.description,
+            reward=task.reward,
+            long=task.long,
+            lat=task.lat,
+            id=task.id,
+            owner=TaskOwnerDTO.from_orm(task_owner),
+        )
 
 
 class TaskRepository(BaseRepository, ITaskRepository):

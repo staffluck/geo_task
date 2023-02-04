@@ -13,7 +13,11 @@ class BaseTask(DTO):
 
 
 class TaskDTO(BaseTask):
-    ...
+    id: int
+
+
+class TaskDetail(TaskDTO):
+    owner: TaskOwnerDTO
 
 
 class TaskCreate(BaseTask):
