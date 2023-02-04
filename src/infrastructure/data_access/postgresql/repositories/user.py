@@ -1,3 +1,5 @@
+from typing import NoReturn
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
@@ -7,7 +9,17 @@ from src.business_logic.user.exceptions.user import (
     UserNotFoundError,
 )
 from src.business_logic.user.protocols.repository import IUserRepoistory
-from src.infrastructure.data_access.postgresql.repositories.base import BaseRepository
+from src.infrastructure.data_access.postgresql.repositories.base import (
+    BaseRepository,
+    get_orig_exc,
+)
+
+
+def handle_unique_constraint(exc: IntegrityError, field: str) -> NoReturn:
+    raise UserAlreadyExistsError([field]) from exc
+
+
+CONSTRAINT_TO_HANDLER = {"uq_user_email": handle_unique_constraint}
 
 
 class UserRepository(BaseRepository, IUserRepoistory):
@@ -21,9 +33,9 @@ class UserRepository(BaseRepository, IUserRepoistory):
             self.session.add(user)
             await self.session.flush()
         except IntegrityError as e:
-            exc_message = str(e.__cause__)
-            if "uq_user_email" in exc_message:
-                raise UserAlreadyExistsError(["email"]) from e
+            exc = get_orig_exc(e)
+            if exc.constraint_name in CONSTRAINT_TO_HANDLER:
+                CONSTRAINT_TO_HANDLER[exc.constraint_name](e, field="email")
             raise
         return user
 
