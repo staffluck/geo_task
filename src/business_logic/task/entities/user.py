@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class TaskOwner:
+class TaskUser:
     id: int
     email: str
     first_name: str | None

@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import Table
 
-from src.business_logic.task.entities.user import TaskOwner
+from src.business_logic.task.entities.user import TaskUser
 from src.business_logic.user.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
 
@@ -23,6 +23,6 @@ def map_user() -> None:
         user_table,
     )
     mapper_registry.map_imperatively(
-        TaskOwner,
+        TaskUser,
         user_table,
     )
