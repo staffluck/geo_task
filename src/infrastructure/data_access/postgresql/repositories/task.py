@@ -91,6 +91,17 @@ class TaskRepository(BaseRepository, ITaskRepository):
         expr = await self.session.execute(query)
         return expr.scalars().all()
 
+    async def user_has_application(self, user_id: int, task_id: int) -> bool:
+        query = select(
+            select(TaskApplication.id)
+            .filter(
+                TaskApplication.task_id == task_id, TaskApplication.user_id == user_id
+            )
+            .exists()
+        )
+        expr = await self.session.execute(query)
+        return bool(expr.scalar())
+
     async def add_aplication(
         self, task_application: TaskApplication
     ) -> TaskApplication:

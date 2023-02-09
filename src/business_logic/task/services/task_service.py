@@ -14,6 +14,9 @@ from src.business_logic.task.dto.task_application import (
 )
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.task_application import TaskApplication
+from src.business_logic.task.exceptions.task_application import (
+    TaskApplicationAlreadyExistsError,
+)
 from src.business_logic.task.protocols.uow import ITaskUoW
 
 
@@ -59,6 +62,10 @@ class TaskService:
     async def add_application(
         self, task_application_data: TaskApplicationCreate
     ) -> TaskApplicationDTO:
+        if await self.task_uow.task.user_has_application(
+            task_application_data.user.id, task_application_data.task_id
+        ):
+            raise TaskApplicationAlreadyExistsError(["user"])
         task = TaskApplication.create(
             task_id=task_application_data.task_id,
             user_id=task_application_data.user.id,

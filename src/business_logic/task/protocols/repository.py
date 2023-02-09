@@ -28,6 +28,9 @@ class ITaskRepository(Protocol):
     ) -> list[Task]:
         ...
 
+    async def user_has_application(self, user_id: int, task_id: int) -> bool:
+        ...
+
     async def add_aplication(
         self, task_application: TaskApplication
     ) -> TaskApplication:
