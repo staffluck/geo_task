@@ -1,7 +1,9 @@
+from typing import NoReturn
+
 from geoalchemy2 import func
 from geoalchemy2.functions import ST_DistanceSphere  # type: ignore
 from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
 from src.business_logic.task.dto.user import UserDTO
@@ -10,7 +12,18 @@ from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.entities.user import User
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
-from src.infrastructure.data_access.postgresql.repositories.base import BaseRepository
+from src.infrastructure.data_access.postgresql.repositories.base import (
+    BaseRepository,
+    get_orig_exc,
+)
+
+
+# fk_task_application_task_id_task
+def handle_foreign_constraint(exc: IntegrityError, field: str) -> NoReturn:
+    raise TaskNotFoundError(fields=[field]) from exc
+
+
+CONSTRAINT_TO_HANDLE = {"fk_task_application_task_id_task": handle_foreign_constraint}
 
 
 class TaskReader(BaseRepository, ITaskReader):
@@ -81,6 +94,13 @@ class TaskRepository(BaseRepository, ITaskRepository):
     async def add_aplication(
         self, task_application: TaskApplication
     ) -> TaskApplication:
-        self.session.add(task_application)
-        await self.session.flush()
+        try:
+            self.session.add(task_application)
+            await self.session.flush()
+        except IntegrityError as e:
+            exc = get_orig_exc(e)
+            if exc.constraint_name in CONSTRAINT_TO_HANDLE:
+                CONSTRAINT_TO_HANDLE[exc.constraint_name](e, "id")
+            raise
+        await self.session.refresh(task_application)
         return task_application

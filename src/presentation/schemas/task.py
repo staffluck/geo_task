@@ -12,3 +12,8 @@ class TaskCreateSchema(BaseModel):
     reward: int = Field(gt=0, example=100)
     long: float
     lat: float
+
+
+class TaskApplicationCreateSchema(BaseModel):
+    text: str
+    task_id: int

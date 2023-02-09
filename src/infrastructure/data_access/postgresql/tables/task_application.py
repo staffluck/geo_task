@@ -19,5 +19,7 @@ def map_task_application() -> None:
     mapper_registry.map_imperatively(
         TaskApplication,
         task_table,
-        properties={"user": relationship(User, uselist=False, lazy="joined")},
+        properties={
+            "user": relationship(User, uselist=False, lazy="joined", viewonly=True)
+        },
     )
