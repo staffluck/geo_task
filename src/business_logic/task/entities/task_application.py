@@ -8,4 +8,5 @@ class TaskApplication:
     id: int
     task_id: int
     text: str
+    user_id: int
     user: User
