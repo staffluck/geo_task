@@ -6,7 +6,7 @@ from sqlalchemy.exc import NoResultFound
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
 from src.business_logic.task.dto.user import TaskOwnerDTO
 from src.business_logic.task.entities.task import Task
-from src.business_logic.task.entities.user import TaskUser
+from src.business_logic.task.entities.user import User
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
 from src.infrastructure.data_access.postgresql.repositories.base import BaseRepository
@@ -15,8 +15,8 @@ from src.infrastructure.data_access.postgresql.repositories.base import BaseRepo
 class TaskReader(BaseRepository, ITaskReader):
     async def get_task_detail(self, task_id: int) -> TaskDetail:
         query = (
-            select(Task, TaskUser)
-            .join(TaskUser, TaskUser.id == Task.owner_id)
+            select(Task, User)
+            .join(User, User.id == Task.owner_id)
             .filter(Task.id == task_id)
         )
         try:
@@ -25,7 +25,7 @@ class TaskReader(BaseRepository, ITaskReader):
         except NoResultFound:
             raise TaskNotFoundError(["id"])
         task: Task = data[0]
-        task_owner: TaskUser = data[1]
+        task_owner: User = data[1]
         return TaskDetail(
             title=task.title,
             description=task.description,

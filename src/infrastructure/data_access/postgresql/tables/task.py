@@ -3,7 +3,9 @@ from geoalchemy2 import Geometry
 from sqlalchemy import ForeignKey, Table
 
 from src.business_logic.task.entities.task import Task
+from src.business_logic.task.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
+from src.infrastructure.data_access.postgresql.tables.user import user_table
 
 task_table = Table(
     "task",
@@ -21,3 +23,7 @@ task_table = Table(
 
 def map_task() -> None:
     mapper_registry.map_imperatively(Task, task_table)
+    mapper_registry.map_imperatively(
+        User,
+        user_table,
+    )
