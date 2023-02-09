@@ -1,11 +1,12 @@
 from geoalchemy2 import func
-from geoalchemy2.functions import ST_DistanceSphere
+from geoalchemy2.functions import ST_DistanceSphere  # type: ignore
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
-from src.business_logic.task.dto.user import TaskOwnerDTO
+from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.entities.task import Task
+from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.entities.user import User
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
@@ -33,7 +34,7 @@ class TaskReader(BaseRepository, ITaskReader):
             long=task.long,
             lat=task.lat,
             id=task.id,
-            owner=TaskOwnerDTO.from_orm(task_owner),
+            owner=UserDTO.from_orm(task_owner),
         )
 
 
@@ -76,3 +77,10 @@ class TaskRepository(BaseRepository, ITaskRepository):
         )
         expr = await self.session.execute(query)
         return expr.scalars().all()
+
+    async def add_aplication(
+        self, task_application: TaskApplication
+    ) -> TaskApplication:
+        self.session.add(task_application)
+        await self.session.flush()
+        return task_application

@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from src.business_logic.common.dto.base import DTO
-from src.business_logic.task.dto.user import TaskOwnerDTO
+from src.business_logic.task.dto.user import UserDTO
 
 
 class BaseTask(DTO):
@@ -17,11 +17,11 @@ class TaskDTO(BaseTask):
 
 
 class TaskDetail(TaskDTO):
-    owner: TaskOwnerDTO
+    owner: UserDTO
 
 
 class TaskCreate(BaseTask):
-    owner: TaskOwnerDTO
+    owner: UserDTO
 
 
 class GeoLocation(DTO):

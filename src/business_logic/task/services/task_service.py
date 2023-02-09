@@ -8,7 +8,12 @@ from src.business_logic.task.dto.task import (
     TaskDTO,
     TaskFilterByGeo,
 )
+from src.business_logic.task.dto.task_application import (
+    TaskApplicationCreate,
+    TaskApplicationDTO,
+)
 from src.business_logic.task.entities.task import Task
+from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.protocols.uow import ITaskUoW
 
 
@@ -50,3 +55,15 @@ class TaskService:
         task_in_db = await self.task_uow.task.create_task(task)
         await self.task_uow.commit()
         return TaskDTO.from_orm(task_in_db)
+
+    async def add_application(
+        self, task_application_data: TaskApplicationCreate
+    ) -> TaskApplicationDTO:
+        task = TaskApplication.create(
+            task_id=task_application_data.task_id,
+            user_id=task_application_data.user.id,
+            text=task_application_data.text,
+        )
+        task_in_db = await self.task_uow.task.add_aplication(task)
+        await self.task_uow.commit()
+        return TaskApplicationDTO.from_orm(task_in_db)
