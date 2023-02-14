@@ -115,3 +115,4 @@ class TaskRepository(BaseRepository, ITaskRepository):
             raise
         await self.session.refresh(task_application)
         return task_application
+        return task_application

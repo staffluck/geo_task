@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 
 from src.business_logic.common.exceptions import (
     ApplicationError,
@@ -12,17 +13,20 @@ from src.presentation.api.exception_handler import (
     application_error_handler,
     object_already_exists_error_handler,
     object_not_found_error_handler,
+    request_validation_error_handler,
 )
 from src.presentation.api.v1.depends import get_auth_service, get_task_service
 from src.presentation.api.v1.routers import router
 
 
 def setup_exception_handlers(app: FastAPI) -> None:
+    del app.exception_handlers[RequestValidationError]
     app.add_exception_handler(ApplicationError, application_error_handler)
     app.add_exception_handler(ObjectNotFoundError, object_not_found_error_handler)
     app.add_exception_handler(
         ObjectAlreadyExistsError, object_already_exists_error_handler
     )
+    app.add_exception_handler(RequestValidationError, request_validation_error_handler)
 
 
 def setup_dependency(app: FastAPI) -> None:
