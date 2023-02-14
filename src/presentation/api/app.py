@@ -17,6 +17,7 @@ from src.presentation.api.exception_handler import (
 )
 from src.presentation.api.v1.depends import get_auth_service, get_task_service
 from src.presentation.api.v1.routers import router
+from src.presentation.schemas.exceptions import HandledValidationExceptionSchema
 
 
 def setup_exception_handlers(app: FastAPI) -> None:
@@ -36,7 +37,15 @@ def setup_dependency(app: FastAPI) -> None:
 
 def setup_app() -> FastAPI:
     app = FastAPI(debug=True)
-    app.include_router(router)
+    app.include_router(
+        router,
+        responses={
+            422: {
+                "description": "Validation Error",
+                "model": HandledValidationExceptionSchema,
+            }
+        },
+    )
 
     setup_exception_handlers(app)
     setup_dependency(app)
