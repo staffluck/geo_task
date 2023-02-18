@@ -6,13 +6,16 @@ from src.business_logic.task.dto.task_application import (
 )
 from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.services.task_service import TaskService
+from src.presentation.api.openapi_responses.v1.task_application import (
+    add_application_reponses,
+)
 from src.presentation.api.v1.depends import get_current_user, get_task_service
 from src.presentation.schemas.task import TaskApplicationCreateSchema
 
 router = APIRouter(prefix="/application")
 
 
-@router.post("/")
+@router.post("/", responses=add_application_reponses)
 async def add_application_to_task(
     task_application_data: TaskApplicationCreateSchema,
     task_service: TaskService = Depends(get_task_service),
