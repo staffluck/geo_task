@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from src.business_logic.task.dto.task import (
     GeoLocation,
@@ -74,3 +74,12 @@ async def get_task_detail(
 ) -> TaskDetail:
     task = await task_service.get_task_detail(task_id)
     return task
+
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_task(
+    task_id: int,
+    task_service: TaskService = Depends(get_task_service),
+    user: UserDTO = Depends(get_current_user),
+) -> None:
+    await task_service.delete_task(task_id)
