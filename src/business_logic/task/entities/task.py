@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from src.business_logic.common.constants import Empty
+
 
 @dataclass
 class Task:
@@ -34,3 +36,12 @@ class Task:
             lat=lat,
             owner_id=owner_id,
         )
+
+    def update(
+        self, title: str | Empty = Empty.UNSET, description: str | Empty = Empty.UNSET
+    ) -> Task:
+        if title is not Empty.UNSET:
+            self.title = title
+        if description is not Empty.UNSET:
+            self.description = description
+        return self
