@@ -15,6 +15,7 @@ from src.presentation.schemas.common import LimitOffsetQuerySchema
 from src.presentation.schemas.task import (
     TaskCreateSchema,
     TaskFilterByGeoQuerySchema,
+    TaskPaginatedResponseSchema,
     TaskUpdateSchema,
 )
 
@@ -49,12 +50,17 @@ async def create_task(
 async def get_tasks(
     pagination_filter: LimitOffsetQuerySchema = Depends(),
     task_service: TaskService = Depends(get_task_service),
-) -> list[TaskDTO]:
+) -> TaskPaginatedResponseSchema:
     tasks = await task_service.get_tasks(
         limit=pagination_filter.limit,
         offset=pagination_filter.offset,
     )
-    return tasks
+    return TaskPaginatedResponseSchema(
+        total=len(tasks),
+        limit=pagination_filter.limit,
+        offset=pagination_filter.offset,
+        data=tasks,
+    )
 
 
 @router.get("/near")
@@ -62,7 +68,7 @@ async def get_near_tasks(
     pagination_filter: LimitOffsetQuerySchema = Depends(),
     query_filter: TaskFilterByGeoQuerySchema = Depends(),
     task_service: TaskService = Depends(get_task_service),
-) -> list[TaskDTO]:
+) -> TaskPaginatedResponseSchema:
     tasks = await task_service.get_near_tasks(
         TaskFilterByGeo(
             current_geo=GeoLocation(long=query_filter.long, lat=query_filter.lat)
@@ -70,7 +76,12 @@ async def get_near_tasks(
         limit=pagination_filter.limit,
         offset=pagination_filter.offset,
     )
-    return tasks
+    return TaskPaginatedResponseSchema(
+        total=len(tasks),
+        limit=pagination_filter.limit,
+        offset=pagination_filter.offset,
+        data=tasks,
+    )
 
 
 @router.get("/{task_id}")
