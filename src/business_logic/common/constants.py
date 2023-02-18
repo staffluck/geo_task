@@ -2,4 +2,4 @@ from enum import Enum
 
 
 class Empty(Enum):
-    UNSET = object()
+    UNSET = "unset"
