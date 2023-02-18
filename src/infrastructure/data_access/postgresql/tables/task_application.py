@@ -10,8 +10,8 @@ task_table = sa.Table(
     mapper_registry.metadata,
     sa.Column("id", sa.Integer(), primary_key=True),
     sa.Column("text", sa.String(length=256), nullable=False),
-    sa.Column("user_id", sa.ForeignKey("user.id"), nullable=False),
-    sa.Column("task_id", sa.ForeignKey("task.id"), nullable=False),
+    sa.Column("user_id", sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False),
+    sa.Column("task_id", sa.ForeignKey("task.id", ondelete="CASCADE"), nullable=False),
 )
 
 
