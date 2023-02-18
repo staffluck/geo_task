@@ -2,6 +2,8 @@ from typing import List
 
 from pydantic import parse_obj_as
 
+from src.business_logic.common.exceptions import AccessDeniedError
+from src.business_logic.task.access_policy import TaskAccessPolicy
 from src.business_logic.task.dto.task import (
     TaskCreate,
     TaskDetail,
@@ -21,11 +23,9 @@ from src.business_logic.task.protocols.uow import ITaskUoW
 
 
 class TaskService:
-    def __init__(
-        self,
-        task_uow: ITaskUoW,
-    ) -> None:
+    def __init__(self, task_uow: ITaskUoW, access_policy: TaskAccessPolicy) -> None:
         self.task_uow = task_uow
+        self.access_policy = access_policy
 
     async def get_tasks(self, *, limit: int = 100, offset: int = 0) -> list[TaskDTO]:
         tasks = await self.task_uow.task.get_tasks(limit=limit, offset=offset)
@@ -58,6 +58,13 @@ class TaskService:
         task_in_db = await self.task_uow.task.create_task(task)
         await self.task_uow.commit()
         return TaskDTO.from_orm(task_in_db)
+
+    async def delete_task(self, task_id: int) -> None:
+        task = await self.task_uow.task.get_task_by_id(task_id)
+        if not self.access_policy.modify_task(task):
+            raise AccessDeniedError()
+        await self.task_uow.task.delete_task(task_id)
+        await self.task_uow.commit()
 
     async def add_application(
         self, task_application_data: TaskApplicationCreate
