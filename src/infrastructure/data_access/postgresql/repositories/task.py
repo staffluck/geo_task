@@ -2,7 +2,7 @@ from typing import NoReturn
 
 from geoalchemy2 import func
 from geoalchemy2.functions import ST_DistanceSphere  # type: ignore
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
@@ -90,6 +90,10 @@ class TaskRepository(BaseRepository, ITaskRepository):
         )
         expr = await self.session.execute(query)
         return expr.scalars().all()
+
+    async def delete_task(self, task_id: int) -> None:
+        query = delete(Task).filter(Task.id == task_id)
+        await self.session.execute(query)
 
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         query = select(

@@ -28,6 +28,9 @@ class ITaskRepository(Protocol):
     ) -> list[Task]:
         ...
 
+    async def delete_task(self, task_id: int) -> None:
+        ...
+
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         ...
 
