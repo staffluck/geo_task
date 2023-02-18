@@ -2,6 +2,9 @@ from typing import TypedDict
 
 from pydantic import BaseModel, Field
 
+from src.business_logic.task.dto.task import TaskDTO
+from src.presentation.schemas.common import BasePaginate
+
 
 class TaskFilterByGeoQuerySchema(BaseModel):
     long: float
@@ -24,3 +27,7 @@ class TaskUpdateSchema(TypedDict, total=False):
 class TaskApplicationCreateSchema(BaseModel):
     text: str
     task_id: int
+
+
+TaskPaginatedResponseSchema = BasePaginate[TaskDTO]
+TaskPaginatedResponseSchema.__name__ = "Paginate[List[TaskDTO]]"
