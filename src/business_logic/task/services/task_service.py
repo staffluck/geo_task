@@ -73,6 +73,7 @@ class TaskService:
             raise AccessDeniedError()
         task.update(title=task_data.title, description=task_data.description)
         await self.task_uow.task.update_task(task)
+        await self.task_uow.commit()
         return TaskDTO.from_orm(task)
 
     async def add_application(
