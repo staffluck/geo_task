@@ -9,6 +9,7 @@ from src.business_logic.task.dto.task import (
     TaskDetail,
     TaskDTO,
     TaskFilterByGeo,
+    TaskUpdate,
 )
 from src.business_logic.task.dto.task_application import (
     TaskApplicationCreate,
@@ -65,6 +66,14 @@ class TaskService:
             raise AccessDeniedError()
         await self.task_uow.task.delete_task(task_id)
         await self.task_uow.commit()
+
+    async def update_task(self, task_data: TaskUpdate) -> TaskDTO:
+        task = await self.task_uow.task.get_task_by_id(task_data.task_id)
+        if not self.access_policy.modify_task(task):
+            raise AccessDeniedError()
+        task.update(title=task_data.title, description=task_data.description)
+        await self.task_uow.task.update_task(task)
+        return TaskDTO.from_orm(task)
 
     async def add_application(
         self, task_application_data: TaskApplicationCreate
