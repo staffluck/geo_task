@@ -58,7 +58,7 @@ class TaskRepository(BaseRepository, ITaskRepository):
         return bool(expr.scalar())
 
     async def create_task(self, task: Task) -> Task:
-        task.geo = f"POINT({task.long} {task.lat})"
+        task.geo = self._build_point(task)
         self.session.add(task)
         await self.session.flush()
         return task
@@ -95,6 +95,12 @@ class TaskRepository(BaseRepository, ITaskRepository):
         query = delete(Task).filter(Task.id == task_id)
         await self.session.execute(query)
 
+    async def update_task(self, task: Task) -> Task:
+        task.geo = self._build_point(task)
+        self.session.add(task)
+        await self.session.flush()
+        return task
+
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         query = select(
             select(TaskApplication.id)
@@ -119,4 +125,6 @@ class TaskRepository(BaseRepository, ITaskRepository):
             raise
         await self.session.refresh(task_application)
         return task_application
-        return task_application
+
+    def _build_point(self, task: Task) -> str:
+        return f"POINT({task.long} {task.lat})"

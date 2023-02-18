@@ -31,6 +31,9 @@ class ITaskRepository(Protocol):
     async def delete_task(self, task_id: int) -> None:
         ...
 
+    async def update_task(self, task: Task) -> Task:
+        ...
+
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         ...
 
