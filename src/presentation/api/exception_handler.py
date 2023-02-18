@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.business_logic.common.exceptions import (
+    AccessDeniedError,
     ApplicationError,
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
@@ -31,6 +32,11 @@ def object_already_exists_error_handler(
 ) -> JSONResponse:
     schema = HandledExceptionSchema(message=exc.message, context=exc.context)
     return JSONResponse(content=schema.dict(), status_code=400)
+
+
+def access_denied_error_handler(_: Request, exc: AccessDeniedError) -> JSONResponse:
+    schema = HandledExceptionSchema(message=exc.message, context=exc.context)
+    return JSONResponse(content=schema.dict(), status_code=403)
 
 
 def request_validation_error_handler(

@@ -48,3 +48,7 @@ class ObjectNotFoundError(FieldBasedError):
 class ObjectAlreadyExistsError(FieldBasedError):
     message = "Объект с такими данными уже существует"
     context_message = "Объект с таким {field} уже существует"
+
+
+class AccessDeniedError(ApplicationError):
+    message = "Доступ запрещен"
