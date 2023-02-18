@@ -10,6 +10,10 @@ from src.business_logic.task.dto.task import (
 )
 from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.services.task_service import TaskService
+from src.presentation.api.openapi_responses.v1.task import (
+    delete_task_responses,
+    update_task_responses,
+)
 from src.presentation.api.v1.depends import get_current_user, get_task_service
 from src.presentation.schemas.common import LimitOffsetQuerySchema
 from src.presentation.schemas.task import (
@@ -92,7 +96,11 @@ async def get_task_detail(
     return task
 
 
-@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{task_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=delete_task_responses,
+)
 async def delete_task(
     task_id: int,
     task_service: TaskService = Depends(get_task_service),
@@ -101,7 +109,7 @@ async def delete_task(
     await task_service.delete_task(task_id)
 
 
-@router.patch("/{task_id}")
+@router.patch("/{task_id}", responses=update_task_responses)
 async def update_task(
     task_id: int,
     task_data: TaskUpdateSchema,
