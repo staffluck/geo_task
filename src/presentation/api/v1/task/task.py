@@ -6,12 +6,17 @@ from src.business_logic.task.dto.task import (
     TaskDetail,
     TaskDTO,
     TaskFilterByGeo,
+    TaskUpdate,
 )
 from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.services.task_service import TaskService
 from src.presentation.api.v1.depends import get_current_user, get_task_service
 from src.presentation.schemas.common import LimitOffsetQuerySchema
-from src.presentation.schemas.task import TaskCreateSchema, TaskFilterByGeoQuerySchema
+from src.presentation.schemas.task import (
+    TaskCreateSchema,
+    TaskFilterByGeoQuerySchema,
+    TaskUpdateSchema,
+)
 
 router = APIRouter()
 
@@ -83,3 +88,14 @@ async def delete_task(
     user: UserDTO = Depends(get_current_user),
 ) -> None:
     await task_service.delete_task(task_id)
+
+
+@router.patch("/{task_id}")
+async def update_task(
+    task_id: int,
+    task_data: TaskUpdateSchema,
+    task_service: TaskService = Depends(get_task_service),
+    user: UserDTO = Depends(get_current_user),
+) -> TaskDTO:
+    task = await task_service.update_task(TaskUpdate(task_id=task_id, **task_data))
+    return task

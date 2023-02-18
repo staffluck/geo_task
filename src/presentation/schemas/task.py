@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 from pydantic import BaseModel, Field
 
 
@@ -12,6 +14,11 @@ class TaskCreateSchema(BaseModel):
     reward: int = Field(gt=0, example=100)
     long: float
     lat: float
+
+
+class TaskUpdateSchema(TypedDict, total=False):
+    title: str
+    description: str
 
 
 class TaskApplicationCreateSchema(BaseModel):
