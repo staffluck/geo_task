@@ -9,7 +9,7 @@ from src.business_logic.common.exceptions import (
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
 )
-from src.business_logic.user.validators.common import ValidationError
+from src.business_logic.common.validators import ValidationError
 from src.presentation.schemas.exceptions import (
     HandledExceptionSchema,
     HandledValidationExceptionSchema,

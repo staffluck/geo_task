@@ -7,9 +7,9 @@ from src.business_logic.common.exceptions import (
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
 )
+from src.business_logic.common.validators import ValidationError
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.services.auth_service import AuthService
-from src.business_logic.user.validators.common import ValidationError
 from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
 from src.presentation.api.exception_handler import (
     access_denied_error_handler,
