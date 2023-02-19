@@ -13,7 +13,7 @@ class User:
 
     @classmethod
     def create(
-        cls, email: str, password: str, first_name: str | None, last_name: str | None
+        cls, email: str, password: str, first_name: str, last_name: str | None
     ) -> User:
         return cls(
             id=None,  # type: ignore
