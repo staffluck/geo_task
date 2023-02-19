@@ -38,8 +38,7 @@ class Task:
         title: str,
         description: str,
         reward: float,
-        long: float,
-        lat: float,
+        geo: GeoCoord,
         owner_id: int,
     ) -> Task:
         return cls(
@@ -47,8 +46,7 @@ class Task:
             title=title,
             description=description,
             reward=reward,
-            long=long,
-            lat=lat,
+            geo=geo,
             owner_id=owner_id,
         )
 

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 from pydantic import parse_obj_as
@@ -21,6 +22,12 @@ from src.business_logic.task.exceptions.task_application import (
     TaskApplicationAlreadyExistsError,
 )
 from src.business_logic.task.protocols.uow import ITaskUoW
+
+
+@dataclass
+class GeoObject:
+    long: float
+    lat: float
 
 
 class TaskService:
@@ -52,8 +59,7 @@ class TaskService:
             title=task_data.title,
             description=task_data.description,
             reward=task_data.reward,
-            long=task_data.long,
-            lat=task_data.lat,
+            geo=GeoObject(task_data.long, lat=task_data.lat),
             owner_id=task_data.owner.id,
         )
         task_in_db = await self.task_uow.task.create_task(task)
