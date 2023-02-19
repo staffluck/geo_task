@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Protocol
 
 from src.business_logic.common.constants import Empty
+
+
+class GeoCoord(Protocol):
+    lat: float
+    long: float
 
 
 @dataclass
@@ -12,10 +17,20 @@ class Task:
     title: str
     description: str
     reward: float
-    long: float
-    lat: float
     owner_id: int
-    geo: Any = None
+    geo: GeoCoord | str | None = None
+
+    @property
+    def long(self) -> float:
+        if self.geo and not isinstance(self.geo, str):
+            return self.geo.long
+        raise AttributeError()
+
+    @property
+    def lat(self) -> float:
+        if self.geo and not isinstance(self.geo, str):
+            return self.geo.lat
+        raise AttributeError()
 
     @classmethod
     def create(
@@ -23,8 +38,7 @@ class Task:
         title: str,
         description: str,
         reward: float,
-        long: float,
-        lat: float,
+        geo: GeoCoord,
         owner_id: int,
     ) -> Task:
         return cls(
@@ -32,8 +46,7 @@ class Task:
             title=title,
             description=description,
             reward=reward,
-            long=long,
-            lat=lat,
+            geo=geo,
             owner_id=owner_id,
         )
 

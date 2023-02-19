@@ -61,6 +61,7 @@ class TaskRepository(BaseRepository, ITaskRepository):
         task.geo = self._build_point(task)
         self.session.add(task)
         await self.session.flush()
+        await self.session.refresh(task)
         return task
 
     async def get_task_by_id(self, task_id: int) -> Task:

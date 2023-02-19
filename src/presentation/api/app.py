@@ -7,12 +7,14 @@ from src.business_logic.common.exceptions import (
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
 )
+from src.business_logic.common.validators import ValidationError
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.services.auth_service import AuthService
 from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
 from src.presentation.api.exception_handler import (
     access_denied_error_handler,
     application_error_handler,
+    custom_validation_error_handler,
     object_already_exists_error_handler,
     object_not_found_error_handler,
     request_validation_error_handler,
@@ -31,6 +33,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
     )
     app.add_exception_handler(RequestValidationError, request_validation_error_handler)
     app.add_exception_handler(AccessDeniedError, access_denied_error_handler)
+    app.add_exception_handler(ValidationError, custom_validation_error_handler)
 
 
 def setup_dependency(app: FastAPI) -> None:

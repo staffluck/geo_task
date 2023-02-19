@@ -1,7 +1,8 @@
+import geoalchemy2
 import sqlalchemy as sa
-from geoalchemy2 import Geometry
 from sqlalchemy import ForeignKey, Table
 
+import src.infrastructure.data_access.postgresql.tables.monkey_patch_geo  # noqa
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.user import User
 from src.infrastructure.data_access.postgresql.base import mapper_registry
@@ -14,9 +15,7 @@ task_table = Table(
     sa.Column("title", sa.String(length=256), nullable=False),
     sa.Column("description", sa.String(length=256), nullable=False),
     sa.Column("reward", sa.BigInteger(), nullable=False),
-    sa.Column("long", sa.Float),
-    sa.Column("lat", sa.Float),
-    sa.Column("geo", Geometry(geometry_type="POINT", srid=4326)),
+    sa.Column("geo", geoalchemy2.Geometry(geometry_type="POINT", srid=4326)),
     sa.Column("owner_id", ForeignKey("user.id"), nullable=False),
 )
 

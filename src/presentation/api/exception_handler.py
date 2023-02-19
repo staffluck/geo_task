@@ -9,6 +9,7 @@ from src.business_logic.common.exceptions import (
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
 )
+from src.business_logic.common.validators import ValidationError
 from src.presentation.schemas.exceptions import (
     HandledExceptionSchema,
     HandledValidationExceptionSchema,
@@ -47,3 +48,8 @@ def request_validation_error_handler(
         context=jsonable_encoder(exc.errors()),
     )
     return JSONResponse(status_code=422, content=exception_schema.dict())
+
+
+def custom_validation_error_handler(_: Request, exc: ValidationError) -> JSONResponse:
+    schema = HandledExceptionSchema(message=exc.message, context=exc.context)
+    return JSONResponse(status_code=400, content=schema.dict())

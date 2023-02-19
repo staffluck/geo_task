@@ -10,7 +10,7 @@ user_table = Table(
     sa.Column("id", sa.Integer(), primary_key=True),
     sa.Column("email", sa.String(length=256), nullable=False, index=True),
     sa.Column("password", sa.String(length=256), nullable=False),
-    sa.Column("first_name", sa.String(length=100)),
+    sa.Column("first_name", sa.String(length=100), nullable=False),
     sa.Column("last_name", sa.String(length=100)),
     sa.UniqueConstraint("email"),
 )

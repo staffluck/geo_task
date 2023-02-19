@@ -1,8 +1,9 @@
-from pydantic import Field
+from pydantic import Field, validator
 
 from src.business_logic.common.constants import Empty
 from src.business_logic.common.dto.base import DTO
 from src.business_logic.task.dto.user import UserDTO
+from src.business_logic.task.validators.task import validate_title
 
 
 class BaseTask(DTO):
@@ -23,6 +24,16 @@ class TaskDetail(TaskDTO):
 
 class TaskCreate(BaseTask):
     owner: UserDTO
+
+    @validator("title", pre=True)
+    def validate_raw_title(cls, title: str) -> str:  # noqa: N805
+        validate_title(title)
+        return title
+
+    @validator("description", pre=True)
+    def validate_raw_description(cls, description: str) -> str:  # noqa: N805
+        validate_title(description)
+        return description
 
 
 class TaskUpdate(DTO):
