@@ -1,6 +1,6 @@
 import re
 
-from src.business_logic.user.validators.common import ValidationError
+from src.business_logic.common.validators import ValidationError
 
 # Минимум 8 сиволов, 1 цифра
 password_re = r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
