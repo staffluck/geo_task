@@ -15,8 +15,6 @@ task_table = Table(
     sa.Column("title", sa.String(length=256), nullable=False),
     sa.Column("description", sa.String(length=256), nullable=False),
     sa.Column("reward", sa.BigInteger(), nullable=False),
-    sa.Column("long", sa.Float),
-    sa.Column("lat", sa.Float),
     sa.Column("geo", geoalchemy2.Geometry(geometry_type="POINT", srid=4326)),
     sa.Column("owner_id", ForeignKey("user.id"), nullable=False),
 )
