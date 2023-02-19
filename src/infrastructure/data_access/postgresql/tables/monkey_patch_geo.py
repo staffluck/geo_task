@@ -19,21 +19,21 @@ class Geometry(geoalchemy2.Geometry):
 
 class WKTElement(geoalchemy2.WKTElement):
     @property
-    def coords(self):  # noqa
+    def coords(self) -> tuple[float]:
         st = self.data.replace("POLYGON((", "").replace("))", "")
         return [tuple(map(float, s.split())) for s in st.split(",")]
 
     @property
-    def longitude(self):  # noqa
+    def long(self) -> float:
         st = self.data
         return float(st[st.index("(") + 1 : st.index(" ")])
 
     @property
-    def latitude(self):  # noqa
+    def lat(self) -> float:
         st = self.data
         return float(st[st.index(" ") + 1 : len(st) - 1])
 
-    def __nonzero__(self):  # noqa
+    def __nonzero__(self) -> bool:
         return bool(self.data)
 
 
