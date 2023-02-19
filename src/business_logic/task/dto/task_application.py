@@ -2,7 +2,7 @@ from pydantic import validator
 
 from src.business_logic.common.dto.base import DTO
 from src.business_logic.task.dto.user import UserDTO
-from src.business_logic.task.validators.validators import validate_text
+from src.business_logic.task.validators.task_application import validate_text
 
 
 class TaskApplicationDTO(DTO):
