@@ -5,7 +5,7 @@ from src.business_logic.common.dto.base import DTO
 
 class BaseUser(DTO):
     email: EmailStr
-    first_name: str | None
+    first_name: str
     last_name: str | None
 
 

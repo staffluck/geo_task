@@ -8,7 +8,7 @@ class User:
     id: int
     email: str
     password: str
-    first_name: str | None
+    first_name: str
     last_name: str | None
 
     @classmethod
