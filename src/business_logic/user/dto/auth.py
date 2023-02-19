@@ -23,12 +23,12 @@ class UserCreate(BaseUser):
         return password
 
     @validator("first_name", pre=True)
-    def validate_first_name(cls, first_name: str) -> str:  # noqa: N805
+    def validate_raw_first_name(cls, first_name: str) -> str:  # noqa: N805
         validate_first_name(first_name)
         return first_name
 
     @validator("last_name", pre=True)
-    def validate_last_name(cls, last_name: str) -> str:  # noqa: N805
+    def validate_raw_last_name(cls, last_name: str) -> str:  # noqa: N805
         validate_last_name(last_name)
         return last_name
 

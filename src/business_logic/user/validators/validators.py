@@ -1,13 +1,16 @@
 import re
 
-from src.business_logic.common.validators import ValidationError
+from src.business_logic.common.validators import ValidationError, length_validator
 
 # Минимум 8 сиволов, 1 цифра
-password_re = r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+password_re = r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$"
+
+NAME_MIN_LENGTH = 2
+NAME_MAX_LENGTH = 25
 
 common_password_validation_error = ValidationError(
     ["password"],
-    context_message="Пароль должен состоять минимум из 8 символов, содержать в себе 1 цифру",
+    context_message="Пароль должен состоять минимум из 8 и максимум из 30 символов, содержать в себе 1 цифру",
 )
 first_name_length_validation_error = ValidationError(
     ["first_name"],
@@ -25,12 +28,10 @@ def validate_password(password: str) -> None:
 
 
 def validate_first_name(first_name: str) -> None:
-    length = len(first_name)
-    if length > 15 or length <= 1:
+    if not length_validator(first_name, NAME_MIN_LENGTH, NAME_MAX_LENGTH):
         raise first_name_length_validation_error
 
 
 def validate_last_name(last_name: str) -> None:
-    length = len(last_name)
-    if length > 15 or length <= 1:
+    if not length_validator(last_name, NAME_MIN_LENGTH, NAME_MAX_LENGTH):
         raise last_name_length_validation_error
