@@ -13,3 +13,6 @@ text_length_validation_error = ValidationError(
 def validate_text(text: str) -> None:
     if not length_validator(text, TEXT_MIN_LENGTH, TEXT_MAX_LENGTH):
         raise text_length_validation_error
+
+
+def 
