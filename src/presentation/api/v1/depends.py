@@ -19,6 +19,10 @@ from src.infrastructure.data_access.postgresql.repositories.task import (
     TaskReader,
     TaskRepository,
 )
+from src.infrastructure.data_access.postgresql.repositories.task_application import (
+    TaskApplicationReader,
+    TaskApplicationRepository,
+)
 from src.infrastructure.data_access.postgresql.repositories.user import UserRepository
 from src.infrastructure.data_access.postgresql.uow import SQLAlchemyUoW
 from src.infrastructure.managers.hash_manager import HashManager
@@ -61,6 +65,8 @@ def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
         user_repo=UserRepository,
         task_repo=TaskRepository,
         task_reader=TaskReader,
+        task_appl=TaskApplicationRepository,
+        task_appl_reader=TaskApplicationReader,
     )
 
 
