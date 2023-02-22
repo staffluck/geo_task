@@ -34,10 +34,16 @@ class ITaskRepository(Protocol):
     async def update_task(self, task: Task) -> Task:
         ...
 
+
+class ITaskApplicationReader(Protocol):
+    ...
+
+
+class ITaskApplicationRepository(Protocol):
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         ...
 
-    async def add_aplication(
+    async def create_application(
         self, task_application: TaskApplication
     ) -> TaskApplication:
         ...
