@@ -9,6 +9,10 @@ from src.infrastructure.data_access.postgresql.repositories.task import (
     TaskReader,
     TaskRepository,
 )
+from src.infrastructure.data_access.postgresql.repositories.task_application import (
+    TaskApplicationReader,
+    TaskApplicationRepository,
+)
 from src.infrastructure.data_access.postgresql.repositories.user import UserRepository
 
 
@@ -30,8 +34,12 @@ class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW, ITaskUoW):
         user_repo: Type[UserRepository],
         task_repo: Type[TaskRepository],
         task_reader: Type[TaskReader],
+        task_appl: Type[TaskApplicationRepository],
+        task_appl_reader: Type[TaskApplicationReader],
     ) -> None:
         self.user = user_repo(session)
         self.task = task_repo(session)
         self.task_reader = task_reader(session)
+        self.task_appl = task_appl(session)
+        self.task_appl_reader = task_appl_reader(session)
         super().__init__(session)
