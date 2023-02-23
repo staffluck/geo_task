@@ -85,7 +85,7 @@ class TaskService:
     async def add_application(
         self, task_application_data: TaskApplicationCreate
     ) -> TaskApplicationDTO:
-        if await self.task_uow.task.user_has_application(
+        if await self.task_uow.task_appl.user_has_application(
             task_application_data.user.id, task_application_data.task_id
         ):
             raise TaskApplicationAlreadyExistsError(["user"])
@@ -94,6 +94,6 @@ class TaskService:
             user_id=task_application_data.user.id,
             text=task_application_data.text,
         )
-        task_in_db = await self.task_uow.task.add_aplication(task)
+        task_in_db = await self.task_uow.task_appl.create_application(task)
         await self.task_uow.commit()
         return TaskApplicationDTO.from_orm(task_in_db)
