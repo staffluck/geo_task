@@ -12,3 +12,9 @@ class ITaskUoW(IUoW):
     task_reader: ITaskReader
     task_appl: ITaskApplicationRepository
     task_appl_reader: ITaskApplicationReader
+
+
+class ITaskApplicationUoW(IUoW):
+    task: ITaskRepository
+    task_appl: ITaskApplicationRepository
+    task_appl_reader: ITaskApplicationReader
