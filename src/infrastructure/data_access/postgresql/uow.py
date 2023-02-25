@@ -3,7 +3,7 @@ from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.business_logic.common.protocols import IUoW
-from src.business_logic.task.protocols.uow import ITaskUoW
+from src.business_logic.task.protocols.uow import ITaskApplicationUoW, ITaskUoW
 from src.business_logic.user.protocols.uow import IUserUoW
 from src.infrastructure.data_access.postgresql.repositories.task import (
     TaskReader,
@@ -27,7 +27,7 @@ class SQLAlchemyBaseUoW(IUoW):
         await self.session.rollback()
 
 
-class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW, ITaskUoW):
+class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW, ITaskUoW, ITaskApplicationUoW):
     def __init__(
         self,
         session: AsyncSession,
