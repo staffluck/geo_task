@@ -1,4 +1,5 @@
 from src.business_logic.common.exceptions import (
+    ApplicationError,
     ObjectAlreadyExistsError,
     ObjectNotFoundError,
 )
@@ -10,3 +11,7 @@ class TaskApplicationAlreadyExistsError(ObjectAlreadyExistsError):
 
 class TaskApplicationNotFoundError(ObjectNotFoundError):
     ...
+
+
+class TaskApplicationByOwnerError(ApplicationError):
+    message = "Пользователь не может откликнуться на своё задание"

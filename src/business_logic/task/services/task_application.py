@@ -6,29 +6,39 @@ from src.business_logic.task.dto.task_application import (
 from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.exceptions.task_application import (
     TaskApplicationAlreadyExistsError,
+    TaskApplicationByOwnerError,
 )
 from src.business_logic.task.protocols.uow import ITaskApplicationUoW
 
 
 class TaskApplicationService:
     def __init__(
-        self, task_uow: ITaskApplicationUoW, access_policy: TaskApplicationAccessPolicy
+        self,
+        task_appl_uow: ITaskApplicationUoW,
+        access_policy: TaskApplicationAccessPolicy,
     ) -> None:
-        self.task_uow = task_uow
+        self.task_appl_uow = task_appl_uow
         self.access_policy = access_policy
 
     async def add_application(
         self, task_application_data: TaskApplicationCreate
     ) -> TaskApplicationDTO:
-        if await self.task_uow.task_appl.user_has_application(
+        if await self.task_appl_uow.task_appl.user_has_application(
             task_application_data.user.id, task_application_data.task_id
         ):
             raise TaskApplicationAlreadyExistsError(["user"])
+        task = await self.task_appl_uow.task.get_task_by_id(
+            task_application_data.task_id
+        )
+        if task.owner_id == task_application_data.user.id:
+            raise TaskApplicationByOwnerError()
         task_appl = TaskApplication.create(
             task_id=task_application_data.task_id,
             user_id=task_application_data.user.id,
             text=task_application_data.text,
         )
-        task_appl_in_db = await self.task_uow.task_appl.create_application(task_appl)
-        await self.task_uow.commit()
+        task_appl_in_db = await self.task_appl_uow.task_appl.create_application(
+            task_appl
+        )
+        await self.task_appl_uow.commit()
         return TaskApplicationDTO.from_orm(task_appl_in_db)

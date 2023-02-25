@@ -117,4 +117,4 @@ def get_task_appl_service(
     uow: SQLAlchemyUoW = Depends(get_uow),
     access_policy: TaskApplicationAccessPolicy = Depends(get_task_access_policy),
 ) -> TaskApplicationService:
-    return TaskApplicationService(task_uow=uow, access_policy=access_policy)
+    return TaskApplicationService(task_appl_uow=uow, access_policy=access_policy)
