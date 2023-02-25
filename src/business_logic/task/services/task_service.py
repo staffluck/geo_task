@@ -12,15 +12,7 @@ from src.business_logic.task.dto.task import (
     TaskFilterByGeo,
     TaskUpdate,
 )
-from src.business_logic.task.dto.task_application import (
-    TaskApplicationCreate,
-    TaskApplicationDTO,
-)
 from src.business_logic.task.entities.task import Task
-from src.business_logic.task.entities.task_application import TaskApplication
-from src.business_logic.task.exceptions.task_application import (
-    TaskApplicationAlreadyExistsError,
-)
 from src.business_logic.task.protocols.uow import ITaskUoW
 
 
@@ -81,19 +73,3 @@ class TaskService:
         await self.task_uow.task.update_task(task)
         await self.task_uow.commit()
         return TaskDTO.from_orm(task)
-
-    async def add_application(
-        self, task_application_data: TaskApplicationCreate
-    ) -> TaskApplicationDTO:
-        if await self.task_uow.task_appl.user_has_application(
-            task_application_data.user.id, task_application_data.task_id
-        ):
-            raise TaskApplicationAlreadyExistsError(["user"])
-        task = TaskApplication.create(
-            task_id=task_application_data.task_id,
-            user_id=task_application_data.user.id,
-            text=task_application_data.text,
-        )
-        task_in_db = await self.task_uow.task_appl.create_application(task)
-        await self.task_uow.commit()
-        return TaskApplicationDTO.from_orm(task_in_db)
