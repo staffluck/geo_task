@@ -8,6 +8,7 @@ from src.business_logic.common.exceptions import (
     ObjectNotFoundError,
 )
 from src.business_logic.common.validators import ValidationError
+from src.business_logic.task.services.task_application import TaskApplicationService
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.services.auth_service import AuthService
 from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
@@ -19,7 +20,11 @@ from src.presentation.api.exception_handler import (
     object_not_found_error_handler,
     request_validation_error_handler,
 )
-from src.presentation.api.v1.depends import get_auth_service, get_task_service
+from src.presentation.api.v1.depends import (
+    get_auth_service,
+    get_task_appl_service,
+    get_task_service,
+)
 from src.presentation.api.v1.routers import router
 from src.presentation.schemas.exceptions import HandledValidationExceptionSchema
 
@@ -38,6 +43,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
 
 def setup_dependency(app: FastAPI) -> None:
     app.dependency_overrides[TaskService] = get_task_service
+    app.dependency_overrides[TaskApplicationService] = get_task_appl_service
     app.dependency_overrides[AuthService] = get_auth_service
 
 
