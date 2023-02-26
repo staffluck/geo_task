@@ -11,7 +11,11 @@ from src.presentation.api.openapi_responses.v1.task_application import (
     add_application_reponses,
 )
 from src.presentation.api.v1.depends import get_current_user
-from src.presentation.schemas.task import TaskApplicationCreateSchema
+from src.presentation.schemas.common import LimitOffsetQuerySchema
+from src.presentation.schemas.task import (
+    TaskApplicationCreateSchema,
+    TaskApplPaginatedResponseSchema,
+)
 
 router = APIRouter(prefix="/application")
 
@@ -35,3 +39,20 @@ async def add_application_to_task(
         )
     )
     return application
+
+
+@router.get("/my")
+async def get_user_task_applications(
+    pagination_filter: LimitOffsetQuerySchema = Depends(),
+    task_appl_service: TaskApplicationService = Depends(Stub(TaskApplicationService)),
+    user: UserDTO = Depends(get_current_user),
+) -> TaskApplPaginatedResponseSchema:
+    task_applications = await task_appl_service.get_user_task_applications(
+        user.id, limit=pagination_filter.limit, offset=pagination_filter.offset
+    )
+    return TaskApplPaginatedResponseSchema(
+        total=len(task_applications),
+        limit=pagination_filter.limit,
+        offset=pagination_filter.offset,
+        data=task_applications,
+    )
