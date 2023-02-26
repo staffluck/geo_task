@@ -1,13 +1,21 @@
 from typing import Protocol
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
-from src.business_logic.task.dto.task_application import TaskApplicationDetail
+from src.business_logic.task.dto.task_application import (
+    TaskApplicationDetail,
+    TaskApplicationDTO,
+)
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.task_application import TaskApplication
 
 
 class ITaskReader(Protocol):
     async def get_task_detail(self, task_id: int) -> TaskDetail:
+        ...
+
+    async def get_task_applications_by_task_id(
+        self, task_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDTO]:
         ...
 
 
