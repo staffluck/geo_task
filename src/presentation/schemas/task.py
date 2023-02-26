@@ -3,7 +3,10 @@ from typing import TypedDict
 from pydantic import BaseModel, Field
 
 from src.business_logic.task.dto.task import TaskDTO
-from src.business_logic.task.dto.task_application import TaskApplicationDetail
+from src.business_logic.task.dto.task_application import (
+    TaskApplicationDetail,
+    TaskApplicationDTO,
+)
 from src.presentation.schemas.common import BasePaginate
 
 
@@ -33,5 +36,8 @@ class TaskApplicationCreateSchema(BaseModel):
 TaskPaginatedResponseSchema = BasePaginate[TaskDTO]
 TaskPaginatedResponseSchema.__name__ = "Paginate[List[TaskDTO]]"
 
-TaskApplPaginatedResponseSchema = BasePaginate[TaskApplicationDetail]
-TaskApplPaginatedResponseSchema.__name__ = "Paginate[List[TaskApplicationDetail]]"
+TaskApplPaginatedResponseSchema = BasePaginate[TaskApplicationDTO]
+TaskApplPaginatedResponseSchema.__name__ = "Paginate[List[TaskApplicationDTO]]"
+
+TaskApplDetailPaginatedResponseSchema = BasePaginate[TaskApplicationDetail]
+TaskApplDetailPaginatedResponseSchema.__name__ = "Paginate[List[TaskApplicationDetail]]"

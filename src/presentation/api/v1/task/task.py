@@ -10,6 +10,7 @@ from src.business_logic.task.dto.task import (
 )
 from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.services.task_service import TaskService
+from src.presentation.api.depends_stub import Stub
 from src.presentation.api.openapi_responses.v1.task import (
     delete_task_responses,
     update_task_responses,
@@ -17,6 +18,7 @@ from src.presentation.api.openapi_responses.v1.task import (
 from src.presentation.api.v1.depends import get_current_user, get_task_service
 from src.presentation.schemas.common import LimitOffsetQuerySchema
 from src.presentation.schemas.task import (
+    TaskApplPaginatedResponseSchema,
     TaskCreateSchema,
     TaskFilterByGeoQuerySchema,
     TaskPaginatedResponseSchema,
@@ -94,6 +96,24 @@ async def get_task_detail(
 ) -> TaskDetail:
     task = await task_service.get_task_detail(task_id)
     return task
+
+
+@router.get("/{task_id}/applications")
+async def get_associated_task_applications(
+    task_id: int,
+    pagination_filter: LimitOffsetQuerySchema = Depends(),
+    task_service: TaskService = Depends(Stub(TaskService)),
+    user: UserDTO = Depends(get_current_user),
+) -> TaskApplPaginatedResponseSchema:
+    task_applicaitons = await task_service.get_associated_task_applications(
+        task_id, limit=pagination_filter.limit, offset=pagination_filter.offset
+    )
+    return TaskApplPaginatedResponseSchema(
+        total=len(task_applicaitons),
+        limit=pagination_filter.limit,
+        offset=pagination_filter.offset,
+        data=task_applicaitons,
+    )
 
 
 @router.delete(
