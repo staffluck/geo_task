@@ -49,7 +49,7 @@ class TaskApplicationService:
     ) -> list[TaskApplicationDetail]:
         task_appls = (
             await self.task_appl_uow.task_appl_reader.get_user_task_applications(
-                user_id
+                user_id, limit=limit, offset=offset
             )
         )
         return task_appls
