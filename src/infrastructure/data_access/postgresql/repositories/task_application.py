@@ -3,6 +3,9 @@ from typing import NoReturn
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
+from src.business_logic.task.dto.task import TaskDTO
+from src.business_logic.task.dto.task_application import TaskApplicationDetail
+from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import (
@@ -51,4 +54,23 @@ class TaskApplicationRepository(BaseRepository, ITaskApplicationRepository):
 
 
 class TaskApplicationReader(BaseRepository, ITaskApplicationReader):
-    ...
+    async def get_user_task_applications(
+        self, user_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDetail]:
+        query = (
+            select(TaskApplication, Task)
+            .join(Task, TaskApplication.task_id == Task.id)
+            .filter(TaskApplication.user_id == user_id)
+            .limit(limit)
+            .offset(offset)
+        )
+        expr = await self.session.execute(query)
+        raw_data = expr.all()
+        result = []
+        for data in raw_data:
+            task_appl: TaskApplication = data[0]
+            task: Task = data[1]
+            result.append(
+                TaskApplicationDetail(text=task_appl.text, task=TaskDTO.from_orm(task))
+            )
+        return result

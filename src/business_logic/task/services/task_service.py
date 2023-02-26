@@ -12,6 +12,7 @@ from src.business_logic.task.dto.task import (
     TaskFilterByGeo,
     TaskUpdate,
 )
+from src.business_logic.task.dto.task_application import TaskApplicationDTO
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.protocols.uow import ITaskUoW
 
@@ -45,6 +46,16 @@ class TaskService:
     async def get_task_detail(self, task_id: int) -> TaskDetail:
         task = await self.task_uow.task_reader.get_task_detail(task_id)
         return task
+
+    async def get_associated_task_applications(
+        self, task_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDTO]:
+        task = await self.task_uow.task.get_task_by_id(task_id)
+        if not self.access_policy.retrieve_applications(task):
+            raise AccessDeniedError()
+        return await self.task_uow.task_reader.get_task_applications_by_task_id(
+            task_id, limit=limit, offset=offset
+        )
 
     async def create_task(self, task_data: TaskCreate) -> TaskDTO:
         task = Task.create(

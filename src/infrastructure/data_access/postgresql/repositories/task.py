@@ -1,11 +1,16 @@
+from typing import List
+
 from geoalchemy2 import func
 from geoalchemy2.functions import ST_DistanceSphere  # type: ignore
+from pydantic import parse_obj_as
 from sqlalchemy import delete, select
 from sqlalchemy.exc import NoResultFound
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
+from src.business_logic.task.dto.task_application import TaskApplicationDTO
 from src.business_logic.task.dto.user import UserDTO
 from src.business_logic.task.entities.task import Task
+from src.business_logic.task.entities.task_application import TaskApplication
 from src.business_logic.task.entities.user import User
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
@@ -35,6 +40,18 @@ class TaskReader(BaseRepository, ITaskReader):
             id=task.id,
             owner=UserDTO.from_orm(task_owner),
         )
+
+    async def get_task_applications_by_task_id(
+        self, task_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDTO]:
+        query = (
+            select(TaskApplication)
+            .filter(TaskApplication.task_id == task_id)
+            .limit(limit)
+            .offset(offset)
+        )
+        expr = await self.session.execute(query)
+        return parse_obj_as(List[TaskApplicationDTO], expr.scalars().all())
 
 
 class TaskRepository(BaseRepository, ITaskRepository):
