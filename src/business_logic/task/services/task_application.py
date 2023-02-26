@@ -1,6 +1,7 @@
 from src.business_logic.task.access_policy import TaskApplicationAccessPolicy
 from src.business_logic.task.dto.task_application import (
     TaskApplicationCreate,
+    TaskApplicationDetail,
     TaskApplicationDTO,
 )
 from src.business_logic.task.entities.task_application import TaskApplication
@@ -42,3 +43,13 @@ class TaskApplicationService:
         )
         await self.task_appl_uow.commit()
         return TaskApplicationDTO.from_orm(task_appl_in_db)
+
+    async def get_user_task_applications(
+        self, user_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDetail]:
+        task_appls = (
+            await self.task_appl_uow.task_appl_reader.get_user_task_applications(
+                user_id
+            )
+        )
+        return task_appls
