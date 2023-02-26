@@ -1,6 +1,7 @@
 from typing import Protocol
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
+from src.business_logic.task.dto.task_application import TaskApplicationDetail
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.task_application import TaskApplication
 
@@ -36,7 +37,10 @@ class ITaskRepository(Protocol):
 
 
 class ITaskApplicationReader(Protocol):
-    ...
+    async def get_user_task_applications(
+        self, user_id: int, limit: int = 100, offset: int = 0
+    ) -> list[TaskApplicationDetail]:
+        ...
 
 
 class ITaskApplicationRepository(Protocol):
