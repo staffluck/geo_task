@@ -1,8 +1,8 @@
 """city_table
 
-Revision ID: 475c9c62a749
+Revision ID: 76c1e690382a
 Revises: 4f086789b675
-Create Date: 2023-03-04 12:52:46.027640
+Create Date: 2023-03-04 19:20:12.149584
 
 """
 import geoalchemy2
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "475c9c62a749"
+revision = "76c1e690382a"
 down_revision = "4f086789b675"
 branch_labels = None
 depends_on = None
@@ -32,7 +32,7 @@ def upgrade() -> None:
         sa.Column("guid", sa.String(length=256), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_city")),
     )
-    op.create_index(op.f("ix_city_name"), "city", ["name"], unique=False)
+    op.create_index(op.f("ix_city_name"), "city", ["name"], unique=True)
     # ### end Alembic commands ###
 
 
