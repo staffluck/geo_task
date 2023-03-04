@@ -18,6 +18,7 @@ class Task:
     description: str
     reward: float
     owner_id: int
+    city_name: str
     geo: GeoCoord | str | None = None
 
     @property
