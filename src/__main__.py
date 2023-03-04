@@ -12,4 +12,4 @@ if __name__ == "__main__":
     if args.import_cities:
         asyncio.run(import_cities())
     else:
-        uvicorn.run("src.presentation.api.app:app")
+        uvicorn.run("src.presentation.api.app:app", reload=True)
