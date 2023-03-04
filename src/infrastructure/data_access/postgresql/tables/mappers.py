@@ -1,3 +1,4 @@
+from src.infrastructure.data_access.postgresql.tables.city import city_table
 from src.infrastructure.data_access.postgresql.tables.task import map_task
 from src.infrastructure.data_access.postgresql.tables.task_application import (
     map_task_application,
