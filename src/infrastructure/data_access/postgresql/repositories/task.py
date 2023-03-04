@@ -15,6 +15,7 @@ from src.business_logic.task.entities.user import User
 from src.business_logic.task.exceptions.task import TaskNotFoundError
 from src.business_logic.task.protocols.repository import ITaskReader, ITaskRepository
 from src.infrastructure.data_access.postgresql.repositories.base import BaseRepository
+from src.infrastructure.data_access.postgresql.tables.city import city_table
 
 
 class TaskReader(BaseRepository, ITaskReader):
@@ -107,3 +108,12 @@ class TaskRepository(BaseRepository, ITaskRepository):
 
     def _build_point(self, task: Task) -> str:
         return f"POINT({task.long} {task.lat})"
+
+    async def get_nearest_city_name(self, lat: float, long: float) -> str:
+        point = func.ST_Point(long, lat)
+        distance = func.ST_Distance(city_table.c.geo, point).label("test")
+        query = select(city_table.c.name).filter(
+            distance == select(func.min(func.ST_Distance(city_table.c.geo, point)))
+        )
+        expr = await self.session.execute(query)
+        return str(expr.scalar())

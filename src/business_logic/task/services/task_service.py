@@ -58,11 +58,15 @@ class TaskService:
         )
 
     async def create_task(self, task_data: TaskCreate) -> TaskDTO:
+        city_name = await self.task_uow.task.get_nearest_city_name(
+            task_data.long, task_data.lat
+        )
         task = Task.create(
             title=task_data.title,
             description=task_data.description,
             reward=task_data.reward,
             geo=GeoObject(task_data.long, lat=task_data.lat),
+            city_name=city_name,
             owner_id=task_data.owner.id,
         )
         task_in_db = await self.task_uow.task.create_task(task)
