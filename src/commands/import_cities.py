@@ -2,7 +2,10 @@ import csv
 import sys
 from dataclasses import dataclass
 
+from sqlalchemy import insert
+
 from src.infrastructure.data_access.postgresql.db import Session
+from src.infrastructure.data_access.postgresql.tables.city import city_table
 
 
 @dataclass
@@ -15,10 +18,6 @@ class City:
     name: str
     guid: str
     polygon: Polygon
-
-
-def merge_polygons(original: Polygon, new: Polygon) -> None:
-    original.coords.extend(new.coords)
 
 
 def construct_polygon(wtk: str) -> Polygon:
@@ -45,9 +44,20 @@ async def import_cities() -> None:
                 city_name = row[-8]
                 if city_name in cities:
                     city = cities[city_name]
-                    merge_polygons(city.polygon, construct_polygon(row[0]))
+                    new_polygon = construct_polygon(row[0])
+                    if len(city.polygon.coords) < len(new_polygon.coords):
+                        city.polygon = new_polygon
                 else:
                     city = City(
                         name=city_name, guid=row[1], polygon=construct_polygon(row[0])
                     )
                     cities[city_name] = city
+
+    insert_data = [
+        {"name": city.name, "guid": city.guid, "geo": construct_wtk(city.polygon)}
+        for city in cities.values()
+    ]
+    async with session:
+        query = insert(city_table).values(insert_data)
+        await session.execute(query)
+        await session.commit()
