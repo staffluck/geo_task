@@ -7,7 +7,7 @@ from src.infrastructure.data_access.postgresql.db import Session
 
 @dataclass
 class Polygon:
-    coords: list[tuple[str, str]]
+    coords: list[str]
 
 
 @dataclass
@@ -25,9 +25,12 @@ def construct_polygon(wtk: str) -> Polygon:
     coords = wtk.split("((")[1].split("))")[0].split(",")
     final_coords = []
     for coord in coords:
-        x, y = coord.split(" ")
-        final_coords.append((x, y))
+        final_coords.append(coord)
     return Polygon(coords=final_coords)
+
+
+def construct_wtk(polygon: Polygon) -> str:
+    return "POLYGON(( " + ",".join(polygon.coords) + "))"
 
 
 async def import_cities() -> None:
@@ -45,6 +48,6 @@ async def import_cities() -> None:
                     merge_polygons(city.polygon, construct_polygon(row[0]))
                 else:
                     city = City(
-                        name=row[-8], guid=row[1], polygon=construct_polygon(row[0])
+                        name=city_name, guid=row[1], polygon=construct_polygon(row[0])
                     )
                     cities[city_name] = city
