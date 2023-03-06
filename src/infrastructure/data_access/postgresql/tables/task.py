@@ -17,6 +17,7 @@ task_table = Table(
     sa.Column("reward", sa.BigInteger(), nullable=False),
     sa.Column("geo", geoalchemy2.Geometry(geometry_type="POINT", srid=4326)),
     sa.Column("owner_id", ForeignKey("user.id"), nullable=False),
+    sa.Column("city_name", ForeignKey("city.name")),
 )
 
 

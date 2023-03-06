@@ -1,10 +1,7 @@
 from typing import Protocol
 
 from src.business_logic.task.dto.task import TaskDetail, TaskFilterByGeo
-from src.business_logic.task.dto.task_application import (
-    TaskApplicationDetail,
-    TaskApplicationDTO,
-)
+from src.business_logic.task.dto.task_application import TaskApplicationDetail, TaskApplicationDTO
 from src.business_logic.task.entities.task import Task
 from src.business_logic.task.entities.task_application import TaskApplication
 
@@ -41,6 +38,9 @@ class ITaskRepository(Protocol):
         ...
 
     async def update_task(self, task: Task) -> Task:
+        ...
+
+    async def get_nearest_city_name(self, lat: float, long: float) -> str:
         ...
 
 

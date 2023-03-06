@@ -18,6 +18,7 @@ class Task:
     description: str
     reward: float
     owner_id: int
+    city_name: str
     geo: GeoCoord | str | None = None
 
     @property
@@ -40,6 +41,7 @@ class Task:
         reward: float,
         geo: GeoCoord,
         owner_id: int,
+        city_name: str,
     ) -> Task:
         return cls(
             id=None,  # type: ignore
@@ -48,6 +50,7 @@ class Task:
             reward=reward,
             geo=geo,
             owner_id=owner_id,
+            city_name=city_name,
         )
 
     def update(
