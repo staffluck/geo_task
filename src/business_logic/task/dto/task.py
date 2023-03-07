@@ -16,10 +16,12 @@ class BaseTask(DTO):
 
 class TaskDTO(BaseTask):
     id: int
+    city_name: str
 
 
 class TaskDetail(TaskDTO):
     owner: UserDTO
+    city_name: str
 
 
 class TaskCreate(BaseTask):

@@ -34,8 +34,8 @@ class UserRepository(BaseRepository, IUserRepoistory):
             await self.session.flush()
         except IntegrityError as e:
             exc = get_orig_exc(e)
-            if exc.constraint_name in CONSTRAINT_TO_HANDLER:
-                CONSTRAINT_TO_HANDLER[exc.constraint_name](e, field="email")
+            if exc.constraint_name in CONSTRAINT_TO_HANDLER:  # type: ignore
+                CONSTRAINT_TO_HANDLER[exc.constraint_name](e, field="email")  # type: ignore
             raise
         return user
 

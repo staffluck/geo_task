@@ -40,6 +40,7 @@ class TaskReader(BaseRepository, ITaskReader):
             lat=task.lat,
             id=task.id,
             owner=UserDTO.from_orm(task_owner),
+            city_name=task.city_name,
         )
 
     async def get_task_applications_by_task_id(
