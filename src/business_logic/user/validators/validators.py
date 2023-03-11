@@ -10,7 +10,8 @@ NAME_MAX_LENGTH = 25
 
 common_password_validation_error = ValidationError(
     ["password"],
-    context_message="Пароль должен состоять минимум из 8 и максимум из 30 символов, содержать в себе 1 цифру",
+    context_message="""Пароль должен состоять минимум из 8 и максимум из 30 символов,
+    содержать в себе 1 цифру""",
 )
 first_name_length_validation_error = ValidationError(
     ["first_name"],

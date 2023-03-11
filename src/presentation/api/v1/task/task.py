@@ -34,7 +34,8 @@ async def create_task(
     task_service: TaskService = Depends(get_task_service),
     user: UserDTO = Depends(get_current_user),
 ) -> TaskDTO:
-    task = await task_service.create_task(
+
+    return await task_service.create_task(
         TaskCreate(
             title=task_data.title,
             description=task_data.description,
@@ -49,7 +50,6 @@ async def create_task(
             ),
         )
     )
-    return task
 
 
 @router.get("/")
@@ -76,9 +76,7 @@ async def get_near_tasks(
     task_service: TaskService = Depends(get_task_service),
 ) -> TaskPaginatedResponseSchema:
     tasks = await task_service.get_near_tasks(
-        TaskFilterByGeo(
-            current_geo=GeoLocation(long=query_filter.long, lat=query_filter.lat)
-        ),
+        TaskFilterByGeo(current_geo=GeoLocation(long=query_filter.long, lat=query_filter.lat)),
         limit=pagination_filter.limit,
         offset=pagination_filter.offset,
     )
@@ -94,8 +92,7 @@ async def get_near_tasks(
 async def get_task_detail(
     task_id: int, task_service: TaskService = Depends(get_task_service)
 ) -> TaskDetail:
-    task = await task_service.get_task_detail(task_id)
-    return task
+    return await task_service.get_task_detail(task_id)
 
 
 @router.get("/{task_id}/applications")
@@ -136,5 +133,4 @@ async def update_task(
     task_service: TaskService = Depends(get_task_service),
     user: UserDTO = Depends(get_current_user),
 ) -> TaskDTO:
-    task = await task_service.update_task(TaskUpdate(task_id=task_id, **task_data))
-    return task
+    return await task_service.update_task(TaskUpdate(task_id=task_id, **task_data))

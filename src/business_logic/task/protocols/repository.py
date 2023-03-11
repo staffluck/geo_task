@@ -30,7 +30,7 @@ class ITaskRepository(Protocol):
         ...
 
     async def get_tasks_in_radius(
-        self, filter: TaskFilterByGeo, radius: int, limit: int = 100, offset: int = 0
+        self, filters: TaskFilterByGeo, radius: int, limit: int = 100, offset: int = 0
     ) -> list[Task]:
         ...
 
@@ -55,7 +55,5 @@ class ITaskApplicationRepository(Protocol):
     async def user_has_application(self, user_id: int, task_id: int) -> bool:
         ...
 
-    async def create_application(
-        self, task_application: TaskApplication
-    ) -> TaskApplication:
+    async def create_application(self, task_application: TaskApplication) -> TaskApplication:
         ...

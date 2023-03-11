@@ -1,7 +1,5 @@
 from typing import Any
 
-from fastapi import status
-
 from src.business_logic.common.exceptions import AccessDeniedError
 from src.presentation.api.openapi_responses.generator import generate_example_schema
 

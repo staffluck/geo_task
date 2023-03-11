@@ -33,11 +33,23 @@ flake8-bugbear = "^22.12.6"
 flake8-comprehensions = "^3.10.1"
 flake8-print = "^5.0.0"
 flake8-annotations = "^2.9.1"
+ruff = "^0.0.254"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.ruff]
+extend-select = ["B", "Q", "ANN", "E", "W", "C90", "N", "S", "BLE", "FBT", "A", "C4", "EM", "ISC", "ICN", "G", "PIE", "T20", "PT", "T20", "Q", "RSE", "RET", "SLF", "SIM", "ERA", "PL"]
+ignore = ["ANN101", "ANN102", "B008", "S105", "A003", "S106"]
+exclude = ["depends_stub.py", "src/infrastructure/data_access/postgresql/migrations/*", "monkey_patch_geo.py"]
+line-length = 99
+
+[tool.ruff.pep8-naming]
+classmethod-decorators = ["pydantic.validator", "classmethod"]
+
+[tool.black]
+line_length = 99
 
 [tool.isort]
 line_length = 100123

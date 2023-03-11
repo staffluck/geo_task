@@ -5,10 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.business_logic.common.protocols import IUoW
 from src.business_logic.task.protocols.uow import ITaskApplicationUoW, ITaskUoW
 from src.business_logic.user.protocols.uow import IUserUoW
-from src.infrastructure.data_access.postgresql.repositories.task import (
-    TaskReader,
-    TaskRepository,
-)
+from src.infrastructure.data_access.postgresql.repositories.task import TaskReader, TaskRepository
 from src.infrastructure.data_access.postgresql.repositories.task_application import (
     TaskApplicationReader,
     TaskApplicationRepository,
@@ -28,7 +25,7 @@ class SQLAlchemyBaseUoW(IUoW):
 
 
 class SQLAlchemyUoW(SQLAlchemyBaseUoW, IUserUoW, ITaskUoW, ITaskApplicationUoW):
-    def __init__(
+    def __init__(  # noqa PLR0913
         self,
         session: AsyncSession,
         user_repo: Type[UserRepository],

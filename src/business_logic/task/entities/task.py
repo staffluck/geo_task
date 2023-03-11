@@ -25,16 +25,16 @@ class Task:
     def long(self) -> float:
         if self.geo and not isinstance(self.geo, str):
             return self.geo.long
-        raise AttributeError()
+        raise AttributeError
 
     @property
     def lat(self) -> float:
         if self.geo and not isinstance(self.geo, str):
             return self.geo.lat
-        raise AttributeError()
+        raise AttributeError
 
     @classmethod
-    def create(
+    def create(  # noqa PLR0913
         cls,
         title: str,
         description: str,

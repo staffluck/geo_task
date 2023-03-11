@@ -28,28 +28,21 @@ class TaskApplicationService:
             task_application_data.user.id, task_application_data.task_id
         ):
             raise TaskApplicationAlreadyExistsError(["user"])
-        task = await self.task_appl_uow.task.get_task_by_id(
-            task_application_data.task_id
-        )
+        task = await self.task_appl_uow.task.get_task_by_id(task_application_data.task_id)
         if task.owner_id == task_application_data.user.id:
-            raise TaskApplicationByOwnerError()
+            raise TaskApplicationByOwnerError
         task_appl = TaskApplication.create(
             task_id=task_application_data.task_id,
             user_id=task_application_data.user.id,
             text=task_application_data.text,
         )
-        task_appl_in_db = await self.task_appl_uow.task_appl.create_application(
-            task_appl
-        )
+        task_appl_in_db = await self.task_appl_uow.task_appl.create_application(task_appl)
         await self.task_appl_uow.commit()
         return TaskApplicationDTO.from_orm(task_appl_in_db)
 
     async def get_user_task_applications(
         self, user_id: int, limit: int = 100, offset: int = 0
     ) -> list[TaskApplicationDetail]:
-        task_appls = (
-            await self.task_appl_uow.task_appl_reader.get_user_task_applications(
-                user_id, limit=limit, offset=offset
-            )
+        return await self.task_appl_uow.task_appl_reader.get_user_task_applications(
+            user_id, limit=limit, offset=offset
         )
-        return task_appls

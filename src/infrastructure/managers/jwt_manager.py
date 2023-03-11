@@ -37,10 +37,7 @@ class JWTManager(IJWTManager):
         else:
             expire = datetime.utcnow() + timedelta(minutes=15)
         to_encode["exp"] = expire
-        encoded_jwt = jwt.encode(
-            to_encode, self.settings.SECRET_KEY, algorithm=self.settings.ALGORITHM
-        )
-        return encoded_jwt
+        return jwt.encode(to_encode, self.settings.SECRET_KEY, algorithm=self.settings.ALGORITHM)
 
     def decode_access_token(self, access_token: str) -> AccessTokenData:
         token_data = self._decode_jwt(access_token, JWTType.ACCESS_TOKEN)

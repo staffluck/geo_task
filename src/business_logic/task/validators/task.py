@@ -20,7 +20,5 @@ def validate_title(title: str) -> None:
 
 
 def validate_description(description: str) -> None:
-    if not length_validator(
-        description, DESCRIPTION_MIN_LENGTH, DESCRIPTION_MAX_LENGTH
-    ):
+    if not length_validator(description, DESCRIPTION_MIN_LENGTH, DESCRIPTION_MAX_LENGTH):
         raise title_length_validation_error

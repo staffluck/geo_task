@@ -20,16 +20,12 @@ from src.infrastructure.data_access.postgresql.tables.city import city_table
 
 class TaskReader(BaseRepository, ITaskReader):
     async def get_task_detail(self, task_id: int) -> TaskDetail:
-        query = (
-            select(Task, User)
-            .join(User, User.id == Task.owner_id)
-            .filter(Task.id == task_id)
-        )
+        query = select(Task, User).join(User, User.id == Task.owner_id).filter(Task.id == task_id)
         try:
             expr = await self.session.execute(query)
             data = expr.one()
-        except NoResultFound:
-            raise TaskNotFoundError(["id"])
+        except NoResultFound as e:
+            raise TaskNotFoundError(["id"]) from e
         task: Task = data[0]
         task_owner: User = data[1]
         return TaskDetail(
@@ -83,11 +79,9 @@ class TaskRepository(BaseRepository, ITaskRepository):
         return expr.scalars().all()
 
     async def get_tasks_in_radius(
-        self, filter: TaskFilterByGeo, radius: int, limit: int = 100, offset: int = 0
+        self, filters: TaskFilterByGeo, radius: int, limit: int = 100, offset: int = 0
     ) -> list[Task]:
-        current_geo_point = func.ST_Point(
-            filter.current_geo.long, filter.current_geo.lat
-        )
+        current_geo_point = func.ST_Point(filters.current_geo.long, filters.current_geo.lat)
         query = (
             select(Task)
             .filter(ST_DistanceSphere(Task.geo, current_geo_point) <= radius)

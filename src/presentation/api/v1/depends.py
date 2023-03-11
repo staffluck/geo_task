@@ -4,25 +4,14 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.business_logic.task.access_policy import (
-    TaskAccessPolicy,
-    TaskApplicationAccessPolicy,
-)
+from src.business_logic.task.access_policy import TaskAccessPolicy, TaskApplicationAccessPolicy
 from src.business_logic.task.services.task_application import TaskApplicationService
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.dto.auth import UserDTO
 from src.business_logic.user.services.auth_service import AuthService
-from src.config import (
-    DatabaseSettings,
-    SecuritySettings,
-    database_settings,
-    security_settings,
-)
+from src.config import DatabaseSettings, SecuritySettings, database_settings, security_settings
 from src.infrastructure.data_access.postgresql.db import Session
-from src.infrastructure.data_access.postgresql.repositories.task import (
-    TaskReader,
-    TaskRepository,
-)
+from src.infrastructure.data_access.postgresql.repositories.task import TaskReader, TaskRepository
 from src.infrastructure.data_access.postgresql.repositories.task_application import (
     TaskApplicationReader,
     TaskApplicationRepository,
@@ -90,8 +79,7 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> UserDTO:
-    user = await auth_service.authorize_user(token)
-    return user
+    return await auth_service.authorize_user(token)
 
 
 def get_task_access_policy(
