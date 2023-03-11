@@ -4,6 +4,7 @@ import asyncio
 import uvicorn
 
 from src.commands.import_cities import import_cities
+from src.config import server_settings
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -12,4 +13,9 @@ if __name__ == "__main__":
     if args.import_cities:
         asyncio.run(import_cities())
     else:
-        uvicorn.run("src.presentation.api.app:app", reload=True, port=8000, host="0.0.0.0")
+        uvicorn.run(
+            "src.presentation.api.app:app",
+            reload=True,
+            port=server_settings.SERVER_PORT,
+            host=server_settings.SERVER_HOST,
+        )

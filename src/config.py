@@ -42,5 +42,12 @@ class SecuritySettings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: int
 
 
+class LoggingSettings(BaseSettings):
+    RENDER_AS_JSON: bool = False
+    level: str = "DEBUG"
+
+
+server_settings = ServerSettings()
 database_settings = DatabaseSettings()
 security_settings = SecuritySettings()
+logging_settings = LoggingSettings()
