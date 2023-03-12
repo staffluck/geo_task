@@ -43,8 +43,20 @@ class SecuritySettings(BaseSettings):
 
 
 class LoggingSettings(BaseSettings):
-    RENDER_AS_JSON: bool = False
-    level: str = "DEBUG"
+    RENDER_LOGS_AS_JSON: bool = False
+    LOGGING_LEVEL: str = "DEBUG"
+
+    @property
+    def additional_configs(self) -> dict:
+        return {
+            "loggers": {
+                "uvicorn": {
+                    "handlers": ["default"],
+                    "level": self.LOGGING_LEVEL,
+                    "propagate": False,
+                }
+            }
+        }
 
 
 server_settings = ServerSettings()

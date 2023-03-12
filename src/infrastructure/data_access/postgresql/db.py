@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.config import DatabaseSettings, database_settings
+from src.config import DatabaseSettings, database_settings, server_settings
 
 
 def make_connection_string(
@@ -13,7 +13,7 @@ def make_connection_string(
     return result
 
 
-engine = create_async_engine(make_connection_string(database_settings), echo=True)
+engine = create_async_engine(make_connection_string(database_settings), echo=server_settings.DEBUG)
 Session = sessionmaker(
     bind=engine,
     expire_on_commit=False,
