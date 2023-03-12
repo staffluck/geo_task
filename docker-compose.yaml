@@ -17,6 +17,8 @@ services:
     volumes:
       - ./:/app
     command: [ "python", "-m", "src" ]
+    networks:
+      - geo.db.network
 
   db:
     image: postgis/postgis:15-3.3
