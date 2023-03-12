@@ -1,15 +1,16 @@
+import logging
+
 from fastapi import APIRouter, Depends
 
 from src.business_logic.user.dto.auth import Token, UserCreate, UserDTO, UserSignin
 from src.business_logic.user.services.auth_service import AuthService
 from src.presentation.api.depends_stub import Stub
-from src.presentation.api.openapi_responses.v1.user import (
-    signin_responses,
-    signup_responses,
-)
+from src.presentation.api.openapi_responses.v1.user import signin_responses, signup_responses
 from src.presentation.api.v1.depends import get_current_user
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 
 @router.post("/signup", responses=signup_responses)  #

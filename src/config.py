@@ -42,5 +42,24 @@ class SecuritySettings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: int
 
 
+class LoggingSettings(BaseSettings):
+    RENDER_LOGS_AS_JSON: bool = False
+    LOGGING_LEVEL: str = "DEBUG"
+
+    @property
+    def additional_configs(self) -> dict:
+        return {
+            "loggers": {
+                "uvicorn": {
+                    "handlers": ["default"],
+                    "level": self.LOGGING_LEVEL,
+                    "propagate": False,
+                }
+            }
+        }
+
+
+server_settings = ServerSettings()
 database_settings = DatabaseSettings()
 security_settings = SecuritySettings()
+logging_settings = LoggingSettings()

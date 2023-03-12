@@ -1,9 +1,31 @@
 version: '3.8'
 
 services:
+  api:
+    container_name: geo.api
+    profiles:
+      - "api"
+    build:
+      context: .
+    restart: unless-stopped
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+    command: [ "python", "-m", "src" ]
+    networks:
+      - geo.db.network
 
   db:
     image: postgis/postgis:15-3.3
+    container_name: geo.db
+    hostname: geo.db
+    profiles:
+      - "api"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -12,19 +34,101 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
+    networks:
+      - geo.db.network
 
-  redis:
-    image: redis:6.2.6-alpine
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - redis_data:/var/lib/redis
+  loki:
+    profiles:
+      - "grafana"
+    image: grafana/loki:2.7.3
+    container_name: geo.loki
+    hostname: geo.loki
+    expose:
+      - "3100"
     ports:
-      - "6379:6379"
-    depends_on:
-      - db
+      - "3100:3100"
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./loki/config.yaml:/etc/loki/config.yaml:ro
+      - geo.loki.data:/tmp/:rw
+    networks:
+      - geo.grafana.network
 
+  # promtail:
+  #   profiles:
+  #     - "grafana"
+  #   image: grafana/promtail:2.7.3
+  #   volumes:
+  #     - /var/log:/var/log
+  #   command: -config.file=/etc/promtail/config.yml
+  #   networks:
+  #     - geo.grafana.network
+
+  grafana:
+    profiles:
+      - "grafana"
+    container_name: geo.grafana
+    hostname: geo.grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - VIRTUAL_HOST=geo.grafana
+      - NETWORK_ACCESS=internal
+      - VIRTUAL_PORT=3000
+    volumes:
+      - geo.grafana.data:/var/lib/grafana:rw
+      - ./grafana/provisioning:/etc/grafana/provisioning:rw
+    # entrypoint:
+    #   - sh
+    #   - -euc
+    #   - |
+    #     mkdir -p /etc/grafana/provisioning/datasources
+    #     cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+    #     apiVersion: 1
+    #     datasources:
+    #     - name: Loki
+    #       type: loki
+    #       access: proxy 
+    #       orgId: 1
+    #       url: http://loki:3100
+    #       basicAuth: false
+    #       isDefault: true
+    #       version: 1
+    #       editable: false
+    #     EOF
+    #     /run.sh
+    image: grafana/grafana:latest
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    networks:
+      - geo.grafana.network
+
+  vector:
+    profiles:
+      - "grafana"
+    image: timberio/vector:0.27.0-alpine
+    container_name: geo.vector
+    hostname: geo.vector
+    restart: unless-stopped
+    expose:
+      - "8383"
+    networks:
+      - geo.grafana.network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./vector.toml:/etc/vector/vector.toml:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 volumes:
-
   postgres_data:
+  geo.grafana.data: {}
+  geo.loki.data: {}
 
-  redis_data:
+networks:
+  geo.db.network: {}
+  geo.grafana.network: {}
