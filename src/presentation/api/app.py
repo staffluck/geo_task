@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from src.business_logic.common.exceptions import (
@@ -9,13 +10,17 @@ from src.business_logic.common.exceptions import (
     ObjectNotFoundError,
 )
 from src.business_logic.common.validators import ValidationError
+from src.business_logic.task.access_policy import TaskAccessPolicy, TaskApplicationAccessPolicy
 from src.business_logic.task.services.task_application import TaskApplicationService
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.services.auth_service import AuthService
 from src.config import DatabaseSettings, LoggingSettings, SecuritySettings
 from src.infrastructure.data_access.postgresql.db import create_sesionmaker
 from src.infrastructure.data_access.postgresql.tables.mappers import map_tables
+from src.infrastructure.data_access.postgresql.uow import SQLAlchemyUoW
 from src.infrastructure.logger.main import setup_logging
+from src.infrastructure.managers.hash_manager import HashManager
+from src.infrastructure.managers.jwt_manager import JWTManager
 from src.presentation.api.exception_handler import (
     access_denied_error_handler,
     application_error_handler,
@@ -26,8 +31,14 @@ from src.presentation.api.exception_handler import (
 )
 from src.presentation.api.v1.depends import (
     get_auth_service,
+    get_hash_manager,
+    get_jwt_manager,
+    get_session,
+    get_task_access_policy,
+    get_task_appl_access_policy,
     get_task_appl_service,
     get_task_service,
+    get_uow,
 )
 from src.presentation.api.v1.routers import router
 from src.presentation.schemas.exceptions import HandledValidationExceptionSchema
@@ -44,9 +55,17 @@ def setup_exception_handlers(app: FastAPI) -> None:
 
 
 def setup_service_dependencies(app: FastAPI) -> None:
+    app.dependency_overrides[SQLAlchemyUoW] = get_uow
     app.dependency_overrides[TaskService] = get_task_service
     app.dependency_overrides[TaskApplicationService] = get_task_appl_service
     app.dependency_overrides[AuthService] = get_auth_service
+    app.dependency_overrides[TaskApplicationAccessPolicy] = get_task_appl_access_policy
+    app.dependency_overrides[TaskAccessPolicy] = get_task_access_policy
+
+
+def setup_managers_dependencies(app: FastAPI) -> None:
+    app.dependency_overrides[JWTManager] = get_jwt_manager
+    app.dependency_overrides[HashManager] = get_hash_manager
 
 
 def setup_settings_dependencies(
@@ -59,6 +78,7 @@ def setup_settings_dependencies(
 def setup_db_settings(app: FastAPI, database_settings: DatabaseSettings) -> None:
     async_sessionmaker = create_sesionmaker(database_settings)
     app.dependency_overrides[sessionmaker] = lambda: async_sessionmaker
+    app.dependency_overrides[AsyncSession] = get_session
 
 
 def setup_dependencies(app: FastAPI) -> None:

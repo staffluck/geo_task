@@ -45,7 +45,7 @@ def get_hash_manager(
     return HashManager(security_settings)
 
 
-def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
+def get_uow(session: AsyncSession = Depends(Stub(AsyncSession))) -> SQLAlchemyUoW:
     return SQLAlchemyUoW(
         session=session,
         user_repo=UserRepository,
@@ -57,9 +57,9 @@ def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
 
 
 def get_auth_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    jwt_manager: JWTManager = Depends(get_jwt_manager),
-    hash_manager: HashManager = Depends(get_hash_manager),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    jwt_manager: JWTManager = Depends(Stub(JWTManager)),
+    hash_manager: HashManager = Depends(Stub(HashManager)),
 ) -> AuthService:
     return AuthService(
         jwt_manager=jwt_manager,
@@ -70,7 +70,7 @@ def get_auth_service(
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    auth_service: AuthService = Depends(get_auth_service),
+    auth_service: AuthService = Depends(Stub(AuthService)),
 ) -> UserDTO:
     return await auth_service.authorize_user(token)
 
@@ -82,8 +82,8 @@ def get_task_access_policy(
 
 
 def get_task_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    access_policy: TaskAccessPolicy = Depends(get_task_access_policy),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    access_policy: TaskAccessPolicy = Depends(Stub(TaskAccessPolicy)),
 ) -> TaskService:
     return TaskService(task_uow=uow, access_policy=access_policy)
 
@@ -95,8 +95,7 @@ def get_task_appl_access_policy(
 
 
 def get_task_appl_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    access_policy: TaskApplicationAccessPolicy = Depends(get_task_access_policy),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    access_policy: TaskApplicationAccessPolicy = Depends(Stub(TaskApplicationAccessPolicy)),
 ) -> TaskApplicationService:
-    return TaskApplicationService(task_appl_uow=uow, access_policy=access_policy)
     return TaskApplicationService(task_appl_uow=uow, access_policy=access_policy)
