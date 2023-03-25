@@ -15,6 +15,7 @@ class DatabaseSettings(BaseSettings):
     DB_HOST: str
     DB_NAME: str
     DB_PORT: str | None
+    DEBUG: bool = False
 
     @property
     def db_url(self) -> str:
@@ -57,9 +58,3 @@ class LoggingSettings(BaseSettings):
                 }
             }
         }
-
-
-server_settings = ServerSettings()
-database_settings = DatabaseSettings()
-security_settings = SecuritySettings()
-logging_settings = LoggingSettings()

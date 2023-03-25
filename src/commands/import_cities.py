@@ -3,8 +3,8 @@ import sys
 from dataclasses import dataclass
 
 from sqlalchemy import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.infrastructure.data_access.postgresql.db import Session
 from src.infrastructure.data_access.postgresql.tables.city import city_table
 
 
@@ -32,8 +32,7 @@ def construct_wtk(polygon: Polygon) -> str:
     return "POLYGON(( " + ",".join(polygon.coords) + "))"
 
 
-async def import_cities() -> None:
-    session = Session()
+async def import_cities(session: AsyncSession) -> None:
     csv.field_size_limit(sys.maxsize)
     cities: dict[str, City] = {}
     with open("src/commands/resources/russia_town_and_city_borders_polygon.csv") as f:
@@ -48,9 +47,7 @@ async def import_cities() -> None:
                     if len(city.polygon.coords) < len(new_polygon.coords):
                         city.polygon = new_polygon
                 else:
-                    city = City(
-                        name=city_name, guid=row[1], polygon=construct_polygon(row[0])
-                    )
+                    city = City(name=city_name, guid=row[1], polygon=construct_polygon(row[0]))
                     cities[city_name] = city
 
     insert_data = [
@@ -60,4 +57,5 @@ async def import_cities() -> None:
     async with session:
         query = insert(city_table).values(insert_data)
         await session.execute(query)
+        await session.commit()
         await session.commit()
