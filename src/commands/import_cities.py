@@ -58,4 +58,3 @@ async def import_cities(session: AsyncSession) -> None:
         query = insert(city_table).values(insert_data)
         await session.execute(query)
         await session.commit()
-        await session.commit()
