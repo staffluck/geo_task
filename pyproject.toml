@@ -54,7 +54,7 @@ classmethod-decorators = ["pydantic.validator", "classmethod"]
 line_length = 99
 
 [tool.isort]
-line_length = 100123
+line_length = 99
 profile="black"
 
 [tool.mypy]

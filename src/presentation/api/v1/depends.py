@@ -3,14 +3,14 @@ from typing import AsyncGenerator
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 from src.business_logic.task.access_policy import TaskAccessPolicy, TaskApplicationAccessPolicy
 from src.business_logic.task.services.task_application import TaskApplicationService
 from src.business_logic.task.services.task_service import TaskService
 from src.business_logic.user.dto.auth import UserDTO
 from src.business_logic.user.services.auth_service import AuthService
-from src.config import DatabaseSettings, SecuritySettings, database_settings, security_settings
-from src.infrastructure.data_access.postgresql.db import Session
+from src.config import SecuritySettings
 from src.infrastructure.data_access.postgresql.repositories.task import TaskReader, TaskRepository
 from src.infrastructure.data_access.postgresql.repositories.task_application import (
     TaskApplicationReader,
@@ -20,39 +20,32 @@ from src.infrastructure.data_access.postgresql.repositories.user import UserRepo
 from src.infrastructure.data_access.postgresql.uow import SQLAlchemyUoW
 from src.infrastructure.managers.hash_manager import HashManager
 from src.infrastructure.managers.jwt_manager import JWTManager
+from src.presentation.api.depends_stub import Stub
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/user/signin")
 
 
-async def get_session() -> AsyncGenerator:
-    session = Session()
-    try:
+async def get_session(
+    sessionmaker: sessionmaker[AsyncSession] = Depends(Stub(sessionmaker)),
+) -> AsyncGenerator:
+    session = sessionmaker()
+    async with session:
         yield session
-    finally:
-        await session.rollback()
-
-
-def get_db_settings() -> DatabaseSettings:
-    return database_settings
-
-
-def get_security_settings() -> SecuritySettings:
-    return security_settings
 
 
 def get_jwt_manager(
-    security_settings: SecuritySettings = Depends(get_security_settings),
+    security_settings: SecuritySettings = Depends(Stub(SecuritySettings)),
 ) -> JWTManager:
     return JWTManager(security_settings)
 
 
 def get_hash_manager(
-    security_settings: SecuritySettings = Depends(get_security_settings),
+    security_settings: SecuritySettings = Depends(Stub(SecuritySettings)),
 ) -> HashManager:
     return HashManager(security_settings)
 
 
-def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
+def get_uow(session: AsyncSession = Depends(Stub(AsyncSession))) -> SQLAlchemyUoW:
     return SQLAlchemyUoW(
         session=session,
         user_repo=UserRepository,
@@ -64,9 +57,9 @@ def get_uow(session: AsyncSession = Depends(get_session)) -> SQLAlchemyUoW:
 
 
 def get_auth_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    jwt_manager: JWTManager = Depends(get_jwt_manager),
-    hash_manager: HashManager = Depends(get_hash_manager),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    jwt_manager: JWTManager = Depends(Stub(JWTManager)),
+    hash_manager: HashManager = Depends(Stub(HashManager)),
 ) -> AuthService:
     return AuthService(
         jwt_manager=jwt_manager,
@@ -77,7 +70,7 @@ def get_auth_service(
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    auth_service: AuthService = Depends(get_auth_service),
+    auth_service: AuthService = Depends(Stub(AuthService)),
 ) -> UserDTO:
     return await auth_service.authorize_user(token)
 
@@ -89,8 +82,8 @@ def get_task_access_policy(
 
 
 def get_task_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    access_policy: TaskAccessPolicy = Depends(get_task_access_policy),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    access_policy: TaskAccessPolicy = Depends(Stub(TaskAccessPolicy)),
 ) -> TaskService:
     return TaskService(task_uow=uow, access_policy=access_policy)
 
@@ -102,7 +95,7 @@ def get_task_appl_access_policy(
 
 
 def get_task_appl_service(
-    uow: SQLAlchemyUoW = Depends(get_uow),
-    access_policy: TaskApplicationAccessPolicy = Depends(get_task_access_policy),
+    uow: SQLAlchemyUoW = Depends(Stub(SQLAlchemyUoW)),
+    access_policy: TaskApplicationAccessPolicy = Depends(Stub(TaskApplicationAccessPolicy)),
 ) -> TaskApplicationService:
     return TaskApplicationService(task_appl_uow=uow, access_policy=access_policy)
