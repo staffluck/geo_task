@@ -15,7 +15,7 @@ from src.presentation.api.openapi_responses.v1.task import (
     delete_task_responses,
     update_task_responses,
 )
-from src.presentation.api.v1.depends import get_current_user, get_task_service
+from src.presentation.api.v1.depends import get_current_user
 from src.presentation.schemas.common import LimitOffsetQuerySchema
 from src.presentation.schemas.task import (
     TaskApplPaginatedResponseSchema,
@@ -31,7 +31,7 @@ router = APIRouter()
 @router.post("/")
 async def create_task(
     task_data: TaskCreateSchema,
-    task_service: TaskService = Depends(get_task_service),
+    task_service: TaskService = Depends(Stub(TaskService)),
     user: UserDTO = Depends(get_current_user),
 ) -> TaskDTO:
 
@@ -55,7 +55,7 @@ async def create_task(
 @router.get("/")
 async def get_tasks(
     pagination_filter: LimitOffsetQuerySchema = Depends(),
-    task_service: TaskService = Depends(get_task_service),
+    task_service: TaskService = Depends(Stub(TaskService)),
 ) -> TaskPaginatedResponseSchema:
     tasks = await task_service.get_tasks(
         limit=pagination_filter.limit,
@@ -73,7 +73,7 @@ async def get_tasks(
 async def get_near_tasks(
     pagination_filter: LimitOffsetQuerySchema = Depends(),
     query_filter: TaskFilterByGeoQuerySchema = Depends(),
-    task_service: TaskService = Depends(get_task_service),
+    task_service: TaskService = Depends(Stub(TaskService)),
 ) -> TaskPaginatedResponseSchema:
     tasks = await task_service.get_near_tasks(
         TaskFilterByGeo(current_geo=GeoLocation(long=query_filter.long, lat=query_filter.lat)),
@@ -90,7 +90,7 @@ async def get_near_tasks(
 
 @router.get("/{task_id}")
 async def get_task_detail(
-    task_id: int, task_service: TaskService = Depends(get_task_service)
+    task_id: int, task_service: TaskService = Depends(Stub(TaskService))
 ) -> TaskDetail:
     return await task_service.get_task_detail(task_id)
 
@@ -120,7 +120,7 @@ async def get_associated_task_applications(
 )
 async def delete_task(
     task_id: int,
-    task_service: TaskService = Depends(get_task_service),
+    task_service: TaskService = Depends(Stub(TaskService)),
     user: UserDTO = Depends(get_current_user),
 ) -> None:
     await task_service.delete_task(task_id)
@@ -130,7 +130,7 @@ async def delete_task(
 async def update_task(
     task_id: int,
     task_data: TaskUpdateSchema,
-    task_service: TaskService = Depends(get_task_service),
+    task_service: TaskService = Depends(Stub(TaskService)),
     user: UserDTO = Depends(get_current_user),
 ) -> TaskDTO:
     return await task_service.update_task(TaskUpdate(task_id=task_id, **task_data))
